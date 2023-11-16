@@ -12,10 +12,10 @@ const createScene = function () {
   var light = createLight(scene)
   var ground = CreateGround(scene);
 
-  // const texture = new BABYLON.Texture("pegging.jpg", scene);
-  // const material = new BABYLON.StandardMaterial("material", scene);
-  // material.diffuseTexture = texture;
-  // sphere2.material = material;
+  const texture = new BABYLON.Texture("./utils/img/guts_dodo.jpg", scene);
+  const material = new BABYLON.StandardMaterial("material", scene);
+  material.diffuseTexture = texture;
+  ground.material = material;
 
   return scene;
 };
