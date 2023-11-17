@@ -11,13 +11,9 @@ var createCamera = function (scene, Targets) {
 }
 
 function createFollowCamera(scene, target) {
-  const camera = new BABYLON.FollowCamera('followCamera', new BABYLON.Vector3(0, 10, -20), scene);
-  camera.radius = 10;
-  camera.heightOffset = 5;
-  camera.rotationOffset = 1;
-  camera.cameraAcceleration = 0.1;
-  camera.maxCameraSpeed = 5;
-  camera.lockedTarget = target;
+  const camera = new BABYLON.ArcRotateCamera('followCamera', 0 ,10, 10, new BABYLON.Vector3(0,0,0), scene);
+  camera.speed = 0.1;
+  camera.attachControl(scene, true);
 
   return camera;
 }
