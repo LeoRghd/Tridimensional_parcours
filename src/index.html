@@ -6,14 +6,19 @@
     <title>Babylon.js Game</title>
     <!-- Inclure le fichier Babylon.js (via CDN ici, vous pouvez utiliser votre propre installation) -->
     <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/earcut@2.2.4"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+    <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
 </head>
 <body>
     <canvas id="renderCanvas" style="width: 100%; height: 100%; display: block;"></canvas>
     <!-- Inclure votre fichier JavaScript -->
     <script src="./models/sphere.js"></script>
     <script src="./models/ground.js"></script>
+    <script src="./models/triangle.js"></script>
     <script src="./light.js"></script>
     <script src="./camera.js"></script>
     <script src="./main.js" ></script>
-</body>
+    <script src="./utils/interface/axes.js"></script>
+  </body>
 </html>
