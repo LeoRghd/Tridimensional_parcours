@@ -1,5 +1,13 @@
 {
   "dependencies": {
-    "babylonjs": "^6.30.0"
+    "@types/cannon": "^0.1.12",
+    "babylonjs": "^6.30.0",
+    "cannon": "^0.6.2",
+    "webpack": "^5.89.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.7",
+    "@babel/preset-env": "^7.23.8",
+    "prettier": "3.1.1"
   }
 }
