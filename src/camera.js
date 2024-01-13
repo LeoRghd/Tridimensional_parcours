@@ -1,4 +1,5 @@
 function camBehindPlayer(camera, player) {
+  camera.setTarget(player);
   let previousCameraDirection = new BABYLON.Vector3.Zero();
   let cameraDirection = camera.getTarget().subtract(camera.position).normalize();
 
