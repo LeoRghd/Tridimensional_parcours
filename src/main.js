@@ -10,6 +10,7 @@ const loadModel = async (scene) =>{
 
 const createScene = function () {
   const scene = new BABYLON.Scene(engine);
+  scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), new BABYLON.CannonJSPlugin(true, 10, CANNON));
   createLight(scene);
   applyGroundTexture(CreateGround(scene), scene);
   return scene;
@@ -33,7 +34,7 @@ const applyGroundTexture = function (ground, scene) {
 const setupGameLogic = function (camera, scene, player) {
   const keyStatus = getKeyStatus(scene);
   scene.onBeforeRenderObservable.add(() => {
-    camBehindPlayer(camera, player);
+    camBehindPlayer(camera, player, keyStatus);
     handlePlayerMovement(keyStatus, scene, player);
   });
 };

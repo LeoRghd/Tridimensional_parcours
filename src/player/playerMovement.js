@@ -1,9 +1,7 @@
-
-
-const playerWalkSpeed = 0.23;
+const playerWalkSpeed = 0.05;
 const playerRunSpeed = 0.1;
-const playerSpeedBackwards = 0.01;
-const playerRotationSpeed = 0.1;
+const playerSpeedBackwards = 0.05;
+const playerRotationSpeed = 0.07;
 const runAnimSpeed = 3;
 const walkAnimSpeed = 1;
 

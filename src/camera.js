@@ -1,4 +1,4 @@
-function camBehindPlayer(camera, player) {
+function camBehindPlayer(camera, player, keyStatus) {
   camera.setTarget(player);
   let previousCameraDirection = new BABYLON.Vector3.Zero();
   let cameraDirection = camera.getTarget().subtract(camera.position).normalize();
@@ -18,10 +18,11 @@ function camBehindPlayer(camera, player) {
       angleDifference = (angleDifference + Math.PI) % (2 * Math.PI) - Math.PI;
 
       // Appliquez la rotation seulement si la différence est significative
-      if (Math.abs(angleDifference) > 0.05) { // Seuil ajustable
-          player.rotate(BABYLON.Vector3.Up(), angleDifference);
-      }
-
+	  if (!keyStatus.s && !keyStatus.q && !keyStatus.d){
+		if (Math.abs(angleDifference) > 0.05) { // Seuil ajustable
+			player.rotate(BABYLON.Vector3.Up(), angleDifference);
+		}
+	  }
       // Mise à jour de la direction précédente de la caméra
       previousCameraDirection = cameraDirection.clone();
   }
