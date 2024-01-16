@@ -12,11 +12,14 @@ const loadBox = function (scene) {
   const box = BABYLON.MeshBuilder.CreateBox("box", {size: 2}, scene);
   box.position = new BABYLON.Vector3(0, 10, 0);
   box.physicsImpostor = new BABYLON.PhysicsImpostor(box, BABYLON.PhysicsImpostor.BoxImpostor, {mass: 1, restitution : 0.5}, scene);
-  return box;
 };
 
 
-
+const loadSphere = function (scene) {
+  const sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 3}, scene);
+  sphere.position = new BABYLON.Vector3(1,5,0);
+  sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere, BABYLON.PhysicsImpostor.SphereImpostor, {mass: 1, restitution: 0.8}, scene);
+}
 
 
 
@@ -25,6 +28,8 @@ const createScene = function () {
   scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), new BABYLON.CannonJSPlugin(true, 10, CANNON));
   createLight(scene);
   loadBox(scene);
+  loadSphere(scene);
+
   applyGroundTexture(CreateGround(scene), scene);
   return scene;
 };
