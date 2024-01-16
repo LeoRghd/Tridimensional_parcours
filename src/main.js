@@ -8,10 +8,23 @@ const loadModel = async (scene) =>{
 };
 
 
+const loadBox = function (scene) {
+  const box = BABYLON.MeshBuilder.CreateBox("box", {size: 2}, scene);
+  box.position = new BABYLON.Vector3(0, 10, 0);
+  box.physicsImpostor = new BABYLON.PhysicsImpostor(box, BABYLON.PhysicsImpostor.BoxImpostor, {mass: 1, restitution : 0.5}, scene);
+  return box;
+};
+
+
+
+
+
+
 const createScene = function () {
   const scene = new BABYLON.Scene(engine);
   scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), new BABYLON.CannonJSPlugin(true, 10, CANNON));
   createLight(scene);
+  loadBox(scene);
   applyGroundTexture(CreateGround(scene), scene);
   return scene;
 };
