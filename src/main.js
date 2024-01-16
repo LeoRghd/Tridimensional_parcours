@@ -11,24 +11,36 @@ const loadModel = async (scene) =>{
 const loadBox = function (scene) {
   const box = BABYLON.MeshBuilder.CreateBox("box", {size: 2}, scene);
   box.position = new BABYLON.Vector3(0, 10, 0);
-  box.physicsImpostor = new BABYLON.PhysicsImpostor(box, BABYLON.PhysicsImpostor.BoxImpostor, {mass: 1, restitution : 0.5}, scene);
+  const boxAggregate = new BABYLON.PhysicsAggregate(box, BABYLON.PhysicsShapeType.BOX, {mass: 1, restitution : 0.75}, scene);
 };
 
 
 const loadSphere = function (scene) {
   const sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 3}, scene);
   sphere.position = new BABYLON.Vector3(1,5,0);
-  sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere, BABYLON.PhysicsImpostor.SphereImpostor, {mass: 1, restitution: 0.8}, scene);
+  const sphereBody = new BABYLON.PhysicsBody(sphere, BABYLON.PhysicsMotionType.DYNAMIC, false, scene);
+  const sphereShape = new BABYLON.PhysicsShapeSphere(
+    new BABYLON.Vector3(0,0,0), // center of the sphere in local space
+    1.5, // radius of the sphere
+    scene // containing scene
+  );
+  sphereBody.setMassProperties({mass:1
+  });
+  sphereBody.shape = sphereShape;
 }
 
 
 
-const createScene = function () {
+const createScene = async function () {
   const scene = new BABYLON.Scene(engine);
-  scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), new BABYLON.CannonJSPlugin(true, 10, CANNON));
+
+  const havokInstance = await HavokPhysics();
+  const hk = new BABYLON.HavokPlugin(true, havokInstance)
+  scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), hk);
+
   createLight(scene);
-  loadBox(scene);
-  loadSphere(scene);
+  // loadBox(scene);
+  // loadSphere(scene);
 
   applyGroundTexture(CreateGround(scene), scene);
   return scene;
@@ -49,21 +61,28 @@ const applyGroundTexture = function (ground, scene) {
   ground.material = material;
 };
 
-const setupGameLogic = function (camera, scene, player) {
+const setupGameLogic = function (camera, scene, player, playerAggregate) {
   const keyStatus = getKeyStatus(scene);
   scene.onBeforeRenderObservable.add(() => {
     camBehindPlayer(camera, player, keyStatus);
-    handlePlayerMovement(keyStatus, scene, player);
+    handlePlayerMovement(keyStatus, scene, playerAggregate);
   });
 };
 
 //Main :
 (async () => {
-  const scene = createScene();
+  const scene = await createScene();
   const camera = createCamera(scene);
-  const player = await loadModel(scene);
+  const {player, playerAggregate} = await loadModel(scene);
 
-  setupGameLogic(camera, scene, player);
+  physicsViewer = new BABYLON.Debug.PhysicsViewer();
+  for (const mesh of scene.rootNodes) {
+      if (mesh.physicsBody) {
+          const debugMesh = physicsViewer.showBody(mesh.physicsBody);
+      }
+  }
+
+  setupGameLogic(camera, scene, player, playerAggregate);
 
   engine.runRenderLoop(function () {
     scene.render();
