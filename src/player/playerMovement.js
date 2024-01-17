@@ -1,53 +1,108 @@
-const playerWalkSpeed = 0.05;
-const playerRunSpeed = 0.1;
-const playerSpeedBackwards = 0.05;
-const playerRotationSpeed = 0.0007;
-const runAnimSpeed = 3;
-const walkAnimSpeed = 1;
+const playerWalkSpeed = 0.05
+const playerRunSpeed = 0.1
+const playerSpeedBackwards = 0.05
+const playerRotationSpeed = 0.5
+const runAnimSpeed = 3
+const walkAnimSpeed = 1
+const scalar = 5
 
-let speed;
-let animSpeed;
+stopVector = new BABYLON.Vector3(0, 0, 0)
 
-let moving = false;
+let speed
+let animSpeed
 
-var handlePlayerMovement = function (keyStatus, scene, playerAggregate) {
-    // const walkAnim = scene.getAnimationGroupByName("Walking");
+
+let moving = false
+
+const getBoxDirection = function () {
+    const forward = BABYLON.Vector3.TransformCoordinates(
+        new BABYLON.Vector3(0, 0, 1),
+        player.computeWorldMatrix(true)
+    );
+    const direction = forward.subtract(player.position);
+    return direction;
+}
+const smoothRotate = function () {
+    const dir = getBoxDirection();
+    const rot = BABYLON.Quaternion.FromLookDirectionRH(dir, BABYLON.Vector3.Up());
+    const [mesheRoot] = player.getChildMeshes();
+    mesheRoot.rotationQuaternion =
+        mesheRoot.rotationQuaternion || BABYLON.Quaternion.Identity();
+    BABYLON.Quaternion.SlerpToRef(
+        mesheRoot.rotationQuaternion,
+        rot,
+        0.1,
+        mesheRoot.rotationQuaternion
+    );
+}
+
+
+const scale = function (directionVector, scalar) {
+    return new BABYLON.Vector3(directionVector.x * scalar, 0, directionVector.z * scalar)
+}
+
+var handlePlayerMovement = function (
+    keyStatus,
+    scene,
+    player,
+    playerAggregate,
+    camera
+) {
+    const runAnim = scene.getAnimationGroupByName('Run')
+    const jumpAnim = scene.getAnimationGroupByName('Jump')
     // const walkBackAnim = scene.getAnimationGroupByName("WalkingBack");
-    // const idleAnim = scene.getAnimationGroupByName("Idle");
+    const idleAnim = scene.getAnimationGroupByName('Idle')
     // const sambaAnim = scene.getAnimationGroupByName("Samba");
 
-    if (keyStatus.z ||
+    const cameraDirection = camera.getForwardRay().direction
+    console.log(cameraDirection)
+    const d = new BABYLON.Vector3(cameraDirection.x, 0, cameraDirection.z)
+
+    if (
+        keyStatus.z ||
         keyStatus.s ||
         keyStatus.q ||
         keyStatus.d ||
-        keyStatus.b) {
-            moving = true;
-            if (keyStatus.s && !keyStatus.z) {
-                speed = -playerSpeedBackwards;
-                // walkBackAnim.start(true, 1, walkBackAnim.from, walkBackAnim.to, false);
-            }
-            else if (keyStatus.z || keyStatus.q || keyStatus.d) {
-                speed = keyStatus.Shift ? playerRunSpeed : playerWalkSpeed;
-                animSpeed = keyStatus.Shift ? runAnimSpeed : walkAnimSpeed;
-                // walkAnim.speedRatio = animSpeed;
-                // walkAnim.start(true, animSpeed, walkAnim.from, walkAnim.to, false);
-            }
-            if (keyStatus.q) {
-                // playerAggregate.transformNode.rotate(BABYLON.Vector3.Up(), -playerRotationSpeed)
-            }
-            if (keyStatus.d) {
-                // playerAggregate.transformNode.rotate(BABYLON.Vector3.Up(), playerRotationSpeed)
-            }
-            if (keyStatus.b) {
-                // sambaAnim.start(true, 1.0, sambaAnim.from, sambaAnim.to, false);
-            }
-            // player.moveWithCollisions(player.forward.scaleInPlace(speed));
+        keyStatus.b
+    ) {
+        moving = true
+        if (keyStatus.s && !keyStatus.z) {
+            speed = -playerSpeedBackwards
+            // walkBackAnim.start(true, 1, walkBackAnim.from, walkBackAnim.to, false);
+        } else if (keyStatus.z || keyStatus.q || keyStatus.d) {
+            speed = keyStatus.Shift ? playerRunSpeed : playerWalkSpeed
+            animSpeed = keyStatus.Shift ? runAnimSpeed : walkAnimSpeed
+            // walkAnim.speedRatio = animSpeed;
+            // walkAnim.start(true, animSpeed, walkAnim.from, walkAnim.to, false);
         }
-    else if (moving){
-        // idleAnim.start(true, 1.0, idleAnim.from, idleAnim.to, false);
+        if (keyStatus.q) {
+            player.lookAt(player.position.add(d), -Math.PI/2,0, -Math.PI)
+            smoothRotate()
+            // rotateVelocity.set(0, 1, 0)
+            // walkVelocity.set(0, 0, 5)
+            // playerAggregate.body.setAngularVelocity(rotateVelocity)
+            // playerAggregate.body.setLinearVelocity(walkVelocity);
+        }
+        if (keyStatus.d) {
+            player.lookAt(player.position.add(d), Math.PI/2, 0, Math.PI)
+            smoothRotate()
+            // playerAggregate.body.rotate(
+            //     BABYLON.Vector3.Up(),
+            //     playerRotationSpeed
+            // )
+        }
+        playerAggregate.body.setLinearVelocity(cameraDirection)
+    } else if (moving) {
+        // idleAnim.start(true, 1.0, idleAnim.from, idleAnim.to, false)
+        // runAnim.start(true, 1.0, runAnim.from, runAnim.to, false);
+        // jumpAnim.start(true, 1.0, jumpAnim.from, jumpAnim.to, false);
         // sambaAnim.stop();
         // walkAnim.stop();
         // walkBackAnim.stop();
-        moving = false;
+        // walkVelocity.set(0, 0, 0)
+        // rotateVelocity.set(0, 0, 0)
+        playerAggregate.body.setLinearVelocity(stopVector)
+        // playerAggregate.body.setAngularVelocity(rotateVelocity)
+        moving = false
     }
-};
+}
