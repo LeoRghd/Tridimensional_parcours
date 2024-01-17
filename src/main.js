@@ -47,7 +47,8 @@ const loadSphere = function (scene) {
 
 const createScene = async function () {
     const scene = new BABYLON.Scene(engine)
-
+    let gizmoManager = new BABYLON.GizmoManager(scene)
+    gizmoManager.positionGizmoEnabled = true
     const havokInstance = await HavokPhysics()
     const hk = new BABYLON.HavokPlugin(true, havokInstance)
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), hk)

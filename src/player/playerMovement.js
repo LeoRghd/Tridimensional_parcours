@@ -56,7 +56,7 @@ var handlePlayerMovement = function (
 
     const cameraDirection = camera.getForwardRay().direction
     console.log(cameraDirection)
-    const d = new BABYLON.Vector3(cameraDirection.x, 0, cameraDirection.z)
+    const d = new BABYLON.Vector3(cameraDirection.x, cameraDirection.y, cameraDirection.z)
 
     if (
         keyStatus.z ||
@@ -91,7 +91,8 @@ var handlePlayerMovement = function (
             //     playerRotationSpeed
             // )
         }
-        playerAggregate.body.setLinearVelocity(cameraDirection)
+        player.lookAt(d, 0,0,0)
+        playerAggregate.body.setLinearVelocity(scale(cameraDirection, 5))
     } else if (moving) {
         // idleAnim.start(true, 1.0, idleAnim.from, idleAnim.to, false)
         // runAnim.start(true, 1.0, runAnim.from, runAnim.to, false);
