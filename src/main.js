@@ -18,9 +18,10 @@ const loadBox = function (scene) {
     const boxAggregate = new BABYLON.PhysicsAggregate(
         box,
         BABYLON.PhysicsShapeType.BOX,
-        { mass: 1, restitution: 0.75 },
+        { mass: 0.5, restitution: 0.25 },
         scene
     )
+    boxAggregate.body.disablePreStep = false
 }
 
 const loadSphere = function (scene) {
@@ -41,7 +42,7 @@ const loadSphere = function (scene) {
         1.5, // radius of the sphere
         scene // containing scene
     )
-    sphereBody.setMassProperties({ mass: 1 })
+    sphereBody.setMassProperties({ mass: 0.3 })
     sphereBody.shape = sphereShape
 }
 
@@ -52,7 +53,7 @@ const createScene = async function () {
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), hk)
 
     createLight(scene)
-    // loadBox(scene);
+    loadBox(scene);
     // loadSphere(scene);
 
     applyGroundTexture(CreateGround(scene), scene)
@@ -76,8 +77,8 @@ const applyGroundTexture = function (ground, scene) {
 const setupGameLogic = function (camera, scene, player, playerAggregate) {
     const keyStatus = getKeyStatus(scene)
     let gizmoManager = new BABYLON.GizmoManager(scene)
-    gizmoManager.positionGizmoEnabled = true
-    gizmoManager.attachToMesh(player)
+    // gizmoManager.positionGizmoEnabled = true
+    // gizmoManager.attachToMesh(player)
     scene.onBeforeRenderObservable.add(() => {
         camBehindPlayer(camera, player, keyStatus)
         handlePlayerMovement(keyStatus, scene, player, playerAggregate, camera)

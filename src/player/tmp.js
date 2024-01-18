@@ -44,3 +44,40 @@ moving = false
 //         player.rotationQuaternion
 //     );
 // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const model = await BABYLON.SceneLoader.ImportMeshAsync(
+//     '',
+//     './utils/assets/',
+//     'SkinModeling.glb',
+//     scene
+// )
+// player = model.meshes[0]
+// player.position = new BABYLON.Vector3(0, 10, 0)
+
+
+// const playerAggregate = new BABYLON.PhysicsAggregate(
+//     player,
+//     BABYLON.PhysicsShapeType.CYLINDER,
+//     { mass: 1, restitution: 0.25 },
+//     scene
+// )
+// // playerAggregate.body.setMotionType(BABYLON.PhysicsMotionType.DYNAMIC)
+// // playerAggregate.body.setMassProperties({
+// //     inertia: new BABYLON.Vector3(0, 0, 0),
+// // })
+
+// playerAggregate.body.disablePreStep = false
+
+// return { player, playerAggregate }

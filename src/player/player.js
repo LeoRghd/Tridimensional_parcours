@@ -11,8 +11,9 @@ var loadPlayer = async (scene) => {
         scene
     )
     cylinder.position = new BABYLON.Vector3(0, 0.75, 0)
+    cylinder.rotation.y = 45 * (Math.PI/180)
+    cylinder.isVisible = false
     player = model.meshes[0]
-    cylinder.bakeCurrentTransformIntoVertices()
     cylinder.addChild(player)
 
 
@@ -27,7 +28,7 @@ var loadPlayer = async (scene) => {
         inertia: new BABYLON.Vector3(0, 0, 0),
     })
 
-    playerAggregate.body.setLinearVelocity(0,0,5)
+    playerAggregate.body.disablePreStep = false
 
     return { player, playerAggregate }
 }
