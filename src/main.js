@@ -47,8 +47,6 @@ const loadSphere = function (scene) {
 
 const createScene = async function () {
     const scene = new BABYLON.Scene(engine)
-    let gizmoManager = new BABYLON.GizmoManager(scene)
-    gizmoManager.positionGizmoEnabled = true
     const havokInstance = await HavokPhysics()
     const hk = new BABYLON.HavokPlugin(true, havokInstance)
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), hk)
@@ -63,7 +61,7 @@ const createScene = async function () {
 }
 
 const createCamera = function (scene) {
-    var camera = createFollowCamera(scene, true)
+    var camera = createFollowCamera(scene, false)
     camera.wheelPrecision = 10
     return camera
 }
@@ -77,6 +75,9 @@ const applyGroundTexture = function (ground, scene) {
 
 const setupGameLogic = function (camera, scene, player, playerAggregate) {
     const keyStatus = getKeyStatus(scene)
+    let gizmoManager = new BABYLON.GizmoManager(scene)
+    gizmoManager.positionGizmoEnabled = true
+    gizmoManager.attachToMesh(player)
     scene.onBeforeRenderObservable.add(() => {
         camBehindPlayer(camera, player, keyStatus)
         handlePlayerMovement(keyStatus, scene, player, playerAggregate, camera)

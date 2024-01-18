@@ -7,21 +7,14 @@ var loadPlayer = async (scene) => {
     )
     const cylinder = BABYLON.MeshBuilder.CreateCylinder(
         'cylinder',
-        { diameter: 0.3, height: 1 },
+        { diameter: 0.5, height: 1.5 },
         scene
     )
+    cylinder.position = new BABYLON.Vector3(0, 0.75, 0)
     player = model.meshes[0]
     cylinder.bakeCurrentTransformIntoVertices()
     cylinder.addChild(player)
-    
 
-    const skeleton = model.skeletons[0]
-
-    skeleton.animationPropertiesOverride =
-        new BABYLON.AnimationPropertiesOverride()
-    skeleton.animationPropertiesOverride.enableBlending = true
-    skeleton.animationPropertiesOverride.blendingSpeed = 0.05
-    skeleton.animationPropertiesOverride.loopMode = 1
 
     const playerAggregate = new BABYLON.PhysicsAggregate(
         cylinder,
@@ -33,6 +26,8 @@ var loadPlayer = async (scene) => {
     playerAggregate.body.setMassProperties({
         inertia: new BABYLON.Vector3(0, 0, 0),
     })
+
+    playerAggregate.body.setLinearVelocity(0,0,5)
 
     return { player, playerAggregate }
 }
