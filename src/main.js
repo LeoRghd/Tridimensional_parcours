@@ -5,6 +5,7 @@ var app = {}
 app.game = {}
 app.menu = {}
 app.char = {}
+app.ray = {}
 app.char.isMoving = false
 app.isPaused = false
 
@@ -87,16 +88,7 @@ const setupGameLogic = async function (app) {
             app.char,
             app.game.camera
         )
-        app.game.scene.onPointerMove = function (evt, pickResult) {
-          console.log('evt', evt);
-          console.log('pickResult', pickResult);
-            // Vérifiez que le curseur pointe sur une tour
-            if (pickResult.hit && pickResult.pickedMesh.name === 'tower') {
-                var tower = pickResult.pickedMesh
-                console.log('ciblé');
-                // Continuer avec le calcul de la distance
-            }
-        }
+        app.ray = raycast(app.scene)
         // app.char = checkForPlayerRotate(app.char)
     })
     return app
@@ -110,7 +102,6 @@ const setupGameLogic = async function (app) {
     app.menu.scene = createMenuScene(app.game.scene, app.game.camera)
     // const tower = createTower(10, 30, 10, app.game.scene)
     const tower = mapTower.forEach((position) => {
-        console.log('positon', position)
         createTower(10, 70, 10, position.x, position.z, app.game.scene)
     })
 
@@ -119,14 +110,6 @@ const setupGameLogic = async function (app) {
     //     if (mesh.physicsBody) {
     //         const debugMesh = physicsViewer.showBody(mesh.physicsBody)
     //     }
-    // }
-
-    // var raycastResult = new BABYLON.PhysicsRaycastResult()
-    // var start = new BABYLON.Vector3(1, 20, 2)
-    // var end = new BABYLON.Vector3(1, -20, 2)
-    // physicsEngine.raycastToRef(start, end, raycastResult)
-    // if (raycastResult.hasHit) {
-    //     console.log('Collision at ', raycastResult.hitPointWorld)
     // }
 
     let crosshair = addCrosshair(app.game.scene, app.game.camera)

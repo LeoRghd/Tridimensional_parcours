@@ -1,5 +1,4 @@
 var createTower = function (w, h, d, x, z, scene) {
-  console.log('x', x, 'z', z);
     var tower = BABYLON.MeshBuilder.CreateBox(
         'box',
         { width: w, height: h, depth: d },
