@@ -88,7 +88,13 @@ const setupGameLogic = async function (app) {
             app.char,
             app.game.camera
         )
-        app.ray = raycast(app.scene)
+        app.ray = raycast(
+            app.game.scene,
+            app.game.camera,
+            app.char.player,
+            app.ray
+        )
+
         // app.char = checkForPlayerRotate(app.char)
     })
     return app
@@ -112,7 +118,6 @@ const setupGameLogic = async function (app) {
     //     }
     // }
 
-    let crosshair = addCrosshair(app.game.scene, app.game.camera)
     app = await setupGameLogic(app)
 
     engine.runRenderLoop(function () {

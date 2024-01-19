@@ -8,6 +8,8 @@ function addCrosshair(scene, camera) {
     let texture = new BABYLON.DynamicTexture('reticule', w, scene, false)
     texture.hasAlpha = true
 
+
+    
     let ctx = texture.getContext()
     let reticule
 
