@@ -15,14 +15,15 @@ const loadModel = async (scene) => {
 }
 
 const loadBox = function (scene) {
-    const box = BABYLON.MeshBuilder.CreateBox('box', { size: 2 }, scene)
-    box.position = new BABYLON.Vector3(0, 10, 0)
+    const box = BABYLON.MeshBuilder.CreateBox('box', { size: 20 }, scene)
+    box.position = new BABYLON.Vector3(10, 10, 0)
     const boxAggregate = new BABYLON.PhysicsAggregate(
         box,
         BABYLON.PhysicsShapeType.BOX,
-        { mass: 0.5, restitution: 0.25 },
+        { mass: 100000, restitution: 0.1 },
         scene
     )
+    boxAggregate.body.setMotionType(BABYLON.PhysicsMotionType.static)
     boxAggregate.body.disablePreStep = false
 }
 
@@ -111,12 +112,12 @@ const setupGameLogic = async function (app) {
         createTower(10, 70, 10, position.x, position.z, app.game.scene)
     })
 
-    // physicsViewer = new BABYLON.Debug.PhysicsViewer()
-    // for (const mesh of app.game.scene.rootNodes) {
-    //     if (mesh.physicsBody) {
-    //         const debugMesh = physicsViewer.showBody(mesh.physicsBody)
-    //     }
-    // }
+    physicsViewer = new BABYLON.Debug.PhysicsViewer()
+    for (const mesh of app.game.scene.rootNodes) {
+        if (mesh.physicsBody) {
+            const debugMesh = physicsViewer.showBody(mesh.physicsBody)
+        }
+    }
 
     app = await setupGameLogic(app)
 

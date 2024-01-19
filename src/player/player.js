@@ -26,7 +26,7 @@ var loadPlayer = async (scene) => {
     const playerAggregate = new BABYLON.PhysicsAggregate(
         cylinder,
         BABYLON.PhysicsShapeType.CYLINDER,
-        { mass: 10, restitution: 0.75 },
+        { mass: 0.1, restitution: 0 },
         scene
     )
     playerAggregate.body.setMotionType(BABYLON.PhysicsMotionType.DYNAMIC)
