@@ -1,9 +1,12 @@
-
-var  createTower = function (w,h,d, scene) {
-  var tower = BABYLON.MeshBuilder.CreatePlane("rectangle", {width: w, height: h, depth: d}, scene)
-  const texture = new BABYLON.Texture("./utils/textures/rock.png", scene);
-  const material = new BABYLON.StandardMaterial("material", scene);
-  material.diffuseTexture = texture;
-  tower.material = material;
-  return tower
+var createTower = function (w, h, d, x, z, scene) {
+  console.log('x', x, 'z', z);
+    var tower = BABYLON.MeshBuilder.CreateBox(
+        'box',
+        { width: w, height: h, depth: d },
+        scene
+    )
+    tower.position.x = x
+    tower.position.y = h/2 // Positionnement pour que la base soit sur le sol
+    tower.position.z = z
+    return tower
 }

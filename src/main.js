@@ -1,10 +1,11 @@
 var canvas = document.getElementById('renderCanvas')
 var engine = new BABYLON.Engine(canvas, true)
 
-const app = {}
+var app = {}
 app.game = {}
 app.menu = {}
 app.char = {}
+app.char.isMoving = false
 app.isPaused = false
 
 const loadModel = async (scene) => {
@@ -53,7 +54,7 @@ const createScene = async function () {
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), hk)
 
     createLight(scene)
-    loadBox(scene);
+    loadBox(scene)
     // loadSphere(scene);
 
     applyGroundTexture(CreateGround(scene), scene)
@@ -61,8 +62,8 @@ const createScene = async function () {
     return scene
 }
 
-const createCamera = function (scene) {
-    var camera = createFollowCamera(scene, false)
+const createCamera = function (scene, player) {
+    var camera = createFollowCamera(scene, player, false)
     camera.wheelPrecision = 10
     return camera
 }
@@ -74,15 +75,31 @@ const applyGroundTexture = function (ground, scene) {
     ground.material = material
 }
 
-const setupGameLogic = function (camera, scene, player, playerAggregate) {
-    const keyStatus = getKeyStatus(scene)
-    let gizmoManager = new BABYLON.GizmoManager(scene)
+const setupGameLogic = async function (app) {
+    const keyStatus = getKeyStatus(app.game.scene)
+    // let gizmoManager = new BABYLON.GizmoManager(app.game.scene)
     // gizmoManager.positionGizmoEnabled = true
     // gizmoManager.attachToMesh(player)
-    scene.onBeforeRenderObservable.add(() => {
-        camBehindPlayer(camera, player, keyStatus)
-        handlePlayerMovement(keyStatus, scene, player, playerAggregate, camera)
+    app.game.scene.onBeforeRenderObservable.add(() => {
+        app.char = handlePlayerMovement(
+            keyStatus,
+            app.game.scene,
+            app.char,
+            app.game.camera
+        )
+        app.game.scene.onPointerMove = function (evt, pickResult) {
+          console.log('evt', evt);
+          console.log('pickResult', pickResult);
+            // Vérifiez que le curseur pointe sur une tour
+            if (pickResult.hit && pickResult.pickedMesh.name === 'tower') {
+                var tower = pickResult.pickedMesh
+                console.log('ciblé');
+                // Continuer avec le calcul de la distance
+            }
+        }
+        // app.char = checkForPlayerRotate(app.char)
     })
+    return app
 }
 
 //Main :
@@ -91,17 +108,29 @@ const setupGameLogic = function (camera, scene, player, playerAggregate) {
     app.char = await loadModel(app.game.scene)
     app.game.camera = createCamera(app.game.scene, app.char.player)
     app.menu.scene = createMenuScene(app.game.scene, app.game.camera)
-    // const tower = createTower(10, 30, 10, scene)
+    // const tower = createTower(10, 30, 10, app.game.scene)
+    const tower = mapTower.forEach((position) => {
+        console.log('positon', position)
+        createTower(10, 70, 10, position.x, position.z, app.game.scene)
+    })
 
-    physicsViewer = new BABYLON.Debug.PhysicsViewer()
-    for (const mesh of app.game.scene.rootNodes) {
-        if (mesh.physicsBody) {
-            const debugMesh = physicsViewer.showBody(mesh.physicsBody)
-        }
-    }
+    // physicsViewer = new BABYLON.Debug.PhysicsViewer()
+    // for (const mesh of app.game.scene.rootNodes) {
+    //     if (mesh.physicsBody) {
+    //         const debugMesh = physicsViewer.showBody(mesh.physicsBody)
+    //     }
+    // }
+
+    // var raycastResult = new BABYLON.PhysicsRaycastResult()
+    // var start = new BABYLON.Vector3(1, 20, 2)
+    // var end = new BABYLON.Vector3(1, -20, 2)
+    // physicsEngine.raycastToRef(start, end, raycastResult)
+    // if (raycastResult.hasHit) {
+    //     console.log('Collision at ', raycastResult.hitPointWorld)
+    // }
 
     let crosshair = addCrosshair(app.game.scene, app.game.camera)
-    setupGameLogic(app.game.camera, app.game.scene, app.char.player, app.char.playerAggregate)
+    app = await setupGameLogic(app)
 
     engine.runRenderLoop(function () {
         if (!app.isPaused) {

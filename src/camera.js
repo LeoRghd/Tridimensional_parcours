@@ -1,44 +1,4 @@
-function camBehindPlayer(camera, player, keyStatus) {
-    camera.setTarget(player)
-
-    // let previousCameraDirection = new BABYLON.Vector3.Zero()
-    // let cameraDirection = camera
-    //     .getTarget()
-    //     .subtract(camera.position)
-    //     .normalize()
-
-    // Vérifiez si la direction de la caméra a significativement changé
-    // if (
-    //     BABYLON.Vector3.DistanceSquared(
-    //         previousCameraDirection,
-    //         cameraDirection
-    //     ) > 0.01
-    // ) {
-    //     // Calculez l'angle de rotation pour la caméra
-    //     let cameraAngleY = Math.atan2(cameraDirection.x, cameraDirection.z)
-
-    //     // Obtenez l'angle de rotation actuel du personnage
-    //     let playerAngleY = player.rotationQuaternion.toEulerAngles().y
-
-    //     // Calculez la différence d'angle
-    //     let angleDifference = cameraAngleY - playerAngleY
-
-    //     // Normalisez l'angle pour qu'il soit entre -Math.PI et Math.PI
-    //     angleDifference =
-    //         ((angleDifference + Math.PI) % (2 * Math.PI)) - Math.PI
-
-    //     // Appliquez la rotation seulement si la différence est significative
-    //     //   if (!keyStatus.s && !keyStatus.q && !keyStatus.d){
-    //     // if (Math.abs(angleDifference) > 0.05) { // Seuil ajustable
-    //     // 	player.rotate(BABYLON.Vector3.Up(), angleDifference);
-    //     // }
-    //     //   }
-    //     // Mise à jour de la direction précédente de la caméra
-    //     previousCameraDirection = cameraDirection.clone()
-    // }
-}
-
-function createFollowCamera(scene, lock, player) {
+function createFollowCamera(scene, player, lock) {
     const camera = new BABYLON.ArcRotateCamera(
         'followCamera',
         -30,
@@ -50,6 +10,13 @@ function createFollowCamera(scene, lock, player) {
 
     camera.speed = 0.1
     camera.attachControl(scene, true)
+    const cylinder = player.parent
+    // const parent = 
+    const head = cylinder.getChildren().find(function(element) {
+      return element.name === "head"
+    })
+    camera.setTarget(head)
+
     if (!lock) return camera
 
     var isLocked = false

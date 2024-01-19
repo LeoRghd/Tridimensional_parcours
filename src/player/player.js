@@ -1,3 +1,4 @@
+
 var loadPlayer = async (scene) => {
     const model = await BABYLON.SceneLoader.ImportMeshAsync(
         '',
@@ -11,16 +12,21 @@ var loadPlayer = async (scene) => {
         scene
     )
     cylinder.position = new BABYLON.Vector3(0, 0.75, 0)
-    cylinder.rotation.y = 45 * (Math.PI/180)
+    // cylinder.rotation.y = 45 * (Math.PI/180)
     cylinder.isVisible = false
     player = model.meshes[0]
     cylinder.addChild(player)
 
 
+    const sphere = BABYLON.MeshBuilder.CreateSphere('head', {diameter: 0.5}, scene)
+    sphere.position = new BABYLON.Vector3(0, 2.5, 0)
+    sphere.isVisible = false
+    cylinder.addChild(sphere)
+
     const playerAggregate = new BABYLON.PhysicsAggregate(
         cylinder,
         BABYLON.PhysicsShapeType.CYLINDER,
-        { mass: 1, restitution: 0.75 },
+        { mass: 10, restitution: 0.75 },
         scene
     )
     playerAggregate.body.setMotionType(BABYLON.PhysicsMotionType.DYNAMIC)
