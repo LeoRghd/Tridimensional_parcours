@@ -8,30 +8,29 @@ const drawRay = function (ray, scene, app_ray) {
     return app_ray
 }
 
-const raycast = function (scene, camera, player, app_ray) {
-    var distance = null
-    var centerX = scene.getEngine().getRenderWidth() / 2
-    var centerY = scene.getEngine().getRenderHeight() / 2
-    origin = player.posistion
-    var ray = scene.createPickingRay(
-        centerX,
-        centerY,
-        BABYLON.Matrix.Identity(),
-        camera
-    )
+const raycast = function (scene, camera, player, textTexture, app_ray) {
+    let distance = null
+    const cylinder = player.parent
+    const head = cylinder.getChildren().find(function (element) {
+        return element.name === 'crotch'
+    })
+    var hits = []
 
-    // app_ray = drawRay(ray, scene)
-
+    const origin = head.getAbsolutePosition()
+    // console.log('origin', origin);
+    origin.y += 0.5
+    const direction = camera.getForwardRay().direction
+    var ray = new BABYLON.Ray(origin, direction, 500)
+    // let rayHelper = new BABYLON.RayHelper(ray)
+    // rayHelper.show(scene)
     var pickResult = scene.pickWithRay(ray)
     if (pickResult.hit) {
         if (pickResult.pickedMesh.id === 'tower') {
-            // console.log('pickResult', pickResult)
             var hitPoint = pickResult.pickedPoint
-            // console.log('hitPoint', hitPoint)
-            distance = BABYLON.Vector3.Distance(player.position, hitPoint)
-            console.log('distance', distance)
+            distance = BABYLON.Vector3.Distance(origin, hitPoint)
         }
     }
-    let crosshair = addCrosshair(app.game.scene, app.game.camera, distance)
-    return app_ray, distance
+    textTexture = dynamicCrosshair(distance, textTexture)
+
+    return { textTexture, app_ray }
 }

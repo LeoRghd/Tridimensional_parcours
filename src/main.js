@@ -2,10 +2,13 @@ var canvas = document.getElementById('renderCanvas')
 var engine = new BABYLON.Engine(canvas, true)
 
 var app = {}
+app.state = 'menu'
 app.game = {}
 app.menu = {}
 app.char = {}
 app.ray = {}
+app.ground = {}
+app.crossHair = {}
 app.char.isMoving = false
 app.isPaused = false
 
@@ -14,18 +17,18 @@ const loadModel = async (scene) => {
     return player
 }
 
-const loadBox = function (scene) {
-    const box = BABYLON.MeshBuilder.CreateBox('box', { size: 20 }, scene)
-    box.position = new BABYLON.Vector3(10, 10, 0)
-    const boxAggregate = new BABYLON.PhysicsAggregate(
-        box,
-        BABYLON.PhysicsShapeType.BOX,
-        { mass: 100000, restitution: 0.1 },
-        scene
-    )
-    boxAggregate.body.setMotionType(BABYLON.PhysicsMotionType.static)
-    boxAggregate.body.disablePreStep = false
-}
+// const loadBox = function (scene) {
+//     const box = BABYLON.MeshBuilder.CreateBox('box', { size: 20 }, scene)
+//     box.position = new BABYLON.Vector3(10, 10, 0)
+//     const boxAggregate = new BABYLON.PhysicsAggregate(
+//         box,
+//         BABYLON.PhysicsShapeType.BOX,
+//         { mass: 100000, restitution: 0.1 },
+//         scene
+//     )
+//     boxAggregate.body.setMotionType(BABYLON.PhysicsMotionType.static)
+//     boxAggregate.body.disablePreStep = false
+// }
 
 const loadSphere = function (scene) {
     const sphere = BABYLON.MeshBuilder.CreateSphere(
@@ -56,7 +59,7 @@ const createScene = async function () {
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), hk)
 
     createLight(scene)
-    loadBox(scene)
+    // loadBox(scene)
     // loadSphere(scene);
 
     applyGroundTexture(CreateGround(scene), scene)
@@ -93,9 +96,9 @@ const setupGameLogic = async function (app) {
             app.game.scene,
             app.game.camera,
             app.char.player,
+            app.crossHair.textTexture,
             app.ray
         )
-
         // app.char = checkForPlayerRotate(app.char)
     })
     return app
@@ -106,26 +109,30 @@ const setupGameLogic = async function (app) {
     app.game.scene = await createScene()
     app.char = await loadModel(app.game.scene)
     app.game.camera = createCamera(app.game.scene, app.char.player)
-    app.menu.scene = createMenuScene(app.game.scene, app.game.camera)
-    // const tower = createTower(10, 30, 10, app.game.scene)
+    app = createMenuScene(app)
     const tower = mapTower.forEach((position) => {
         createTower(10, 70, 10, position.x, position.z, app.game.scene)
     })
-
-    physicsViewer = new BABYLON.Debug.PhysicsViewer()
-    for (const mesh of app.game.scene.rootNodes) {
-        if (mesh.physicsBody) {
-            const debugMesh = physicsViewer.showBody(mesh.physicsBody)
-        }
-    }
+    app.crossHair = addCrosshair(app.game.scene, app.game.camera)
 
     app = await setupGameLogic(app)
 
     engine.runRenderLoop(function () {
-        if (!app.isPaused) {
-            app.game.scene.render()
+        switch (app.state) {
+          case 'menu':
+            app.menu.scene.render()
+          break
+          case 'game':
+            if (!app.isPaused) {
+              app.game.scene.render()
+            }
+          // case 'settings':
+          //   app.settings.scene.render()
+          // case 'pause':
+          //   app.pause.settings
+            default:
+                break
         }
-        // scene.render();
     })
     window.addEventListener('resize', function () {
         engine.resize()

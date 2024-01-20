@@ -6,6 +6,7 @@ var getKeyStatus = function (scene) {
         d: false,
         b: false,
         Shift: false,
+        space: false
       };
     
     scene.actionManager = new BABYLON.ActionManager(scene);
@@ -15,6 +16,9 @@ var getKeyStatus = function (scene) {
         BABYLON.ActionManager.OnKeyDownTrigger,
         (event) => {
         let key = event.sourceEvent.key;
+        if (key == " "){
+            key = "space"
+        }
         if(key !== "Shift"){
             key = key.toLowerCase();
         }
@@ -29,6 +33,9 @@ var getKeyStatus = function (scene) {
     new BABYLON.ExecuteCodeAction(
         BABYLON.ActionManager.OnKeyUpTrigger, (event) => {
         let key = event.sourceEvent.key;
+        if (key === " ") {
+            key = "space";
+        }
         if (key !== "Shift"){
             key = key.toLowerCase();
         }
