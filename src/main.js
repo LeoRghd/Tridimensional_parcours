@@ -10,6 +10,7 @@ app.ray = {}
 app.ground = {}
 app.crossHair = {}
 app.char.isMoving = false
+app.char.isInAir = false
 app.isPaused = false
 
 const loadModel = async (scene) => {
@@ -92,13 +93,15 @@ const setupGameLogic = async function (app) {
             app.char,
             app.game.camera
         )
-        app.ray = raycast(
-            app.game.scene,
-            app.game.camera,
-            app.char.player,
-            app.crossHair.textTexture,
-            app.ray
-        )
+        // app.ray = raycast(
+        //     app.game.scene,
+        //     app.game.camera,
+        //     app.char.player,
+        //     app.crossHair.textTexture,
+        //     app.ray
+        // )
+
+        // app.char = handleJump(keyStatus, app.game.scene, app.char)
         // app.char = checkForPlayerRotate(app.char)
     })
     return app

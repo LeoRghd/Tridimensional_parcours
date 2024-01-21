@@ -9,3 +9,10 @@ if (pickResult.hit) {
         console.log('distance', distance)
     }
 }
+if (keyStatus.space) {
+    console.log('cum')
+    console.log("before impulse", char.playerAggregate.body.getLinearVelocity())
+    char.playerAggregate.body.applyImpulse(new BABYLON.Vector3(0, 100000, 0), char.player.getAbsolutePosition())
+    console.log("after impulse", char.playerAggregate.body.getLinearVelocity())
+    keyStatus.space = false
+}

@@ -1,3 +1,6 @@
+
+counter = 0
+
 const getForwardVector = function (camera) {
     let cameraDirection = camera.getForwardRay().direction
     return new BABYLON.Vector3(cameraDirection.x, 0, cameraDirection.z)
@@ -11,42 +14,39 @@ const applyMovementForce = function (char, direction, speed) {
     char.playerAggregate.body.setLinearVelocity(force)
 }
 
-const applyJump = function (char, direction) {
-    position = char.player.position
-    char.playerAggregate.body.applyImpulse(direction, position)
-}
-//TODO turn character with camera cuz raycast
-// const movementDir = new BABYLON.Vector3(0, 0, 0)
-
 var handlePlayerMovement = function (keyStatus, scene, char, camera) {
     const runAnim = scene.getAnimationGroupByName('Run')
     const jumpAnim = scene.getAnimationGroupByName('Jump')
     const idleAnim = scene.getAnimationGroupByName('Idle')
 
+    // idleAnim.start(true, 1.0, runAnim.from, runAnim.to, false)
+
     let forward = getForwardVector(camera)
     let speed = 50
-    jumpMovementDir = new BABYLON.Vector3(0, 0, 0)
-    jumpDir = new BABYLON.Vector3(0, 5, 0)
-    if (keyStatus.space) {
-        console.log('cum')
-        char.playerAggregate.body.applyImpulse(
-            jumpDir,
-            char.player.getAbsolutePosition()
-        )
-        // jumpMovementDir.addInPlace(jumpDir)
-        keyStatus.space = false
-    }
-    if (keyStatus.z || keyStatus.s || keyStatus.q || keyStatus.d) {
-      if (!char.isMoving) {
-        var axis = new BABYLON.Vector3(0, 1, 0)
-        var angle = Math.PI / 4
-        // char.player.rotate(axis, angle, BABYLON.Space.WORLD)
-        
-      }
+    if (
+        keyStatus.z ||
+        keyStatus.s ||
+        keyStatus.q ||
+        keyStatus.d ||
+        keyStatus.space
+    ) {
+        if (char.isMoving) {
+            var axis = new BABYLON.Vector3(0, 1, 0)
+            var angle = Math.PI / 4
+            char.player.rotation.y = 45 * (Math.PI / 180)
+        }
         char.isMoving = true
         runAnim.start(true, 1.0, runAnim.from, runAnim.to, false)
 
         let movementDir = new BABYLON.Vector3(0, 0, 0)
+
+        if (keyStatus.space) {
+            console.log('counter', counter++)
+            // console.log("before impulse", char.playerAggregate.body.getLinearVelocity())
+            char.playerAggregate.body.applyImpulse(new BABYLON.Vector3(0, 100000, 0), char.player.getAbsolutePosition())
+            // console.log("after impulse", char.playerAggregate.body.getLinearVelocity())
+            // keyStatus.space = false
+        }
 
         // Forward + Left
         if (keyStatus.z && keyStatus.q) {
@@ -58,6 +58,7 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
                 char.player.parent.position.add(forward),
                 -Math.PI / 4
             )
+            applyMovementForce(char, movementDir, speed)
         }
 
         //Forward + Right
@@ -70,6 +71,7 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
                 char.player.parent.position.add(forward),
                 Math.PI / 4
             )
+            applyMovementForce(char, movementDir, speed)
         }
 
         //Backwards + Left
@@ -82,6 +84,7 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
                 char.player.parent.position.add(forward),
                 (-5 * Math.PI) / 8
             )
+            applyMovementForce(char, movementDir, speed)
         }
 
         //Backwards + Right
@@ -94,6 +97,7 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
                 char.player.parent.position.add(forward),
                 (7 * Math.PI) / 8
             )
+            applyMovementForce(char, movementDir, speed)
         }
 
         //Forward
@@ -109,6 +113,7 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
                 0,
                 0
             )
+            applyMovementForce(char, movementDir, speed)
         }
 
         //Backward
@@ -122,6 +127,7 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
                 0,
                 0
             )
+            applyMovementForce(char, movementDir, speed)
         }
 
         //Right
@@ -133,6 +139,7 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
                 char.player.parent.position.add(forward),
                 Math.PI / 2
             )
+            applyMovementForce(char, movementDir, speed)
         }
 
         //Left
@@ -144,26 +151,42 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
                 char.player.parent.position.add(forward),
                 -Math.PI / 2
             )
+            applyMovementForce(char, movementDir, speed)
         }
         // console.log(movementDir)
-        movementDir.normalize()
-        applyMovementForce(char, movementDir, speed)
+        // movementDir.normalize()
+        // applyMovementForce(char, movementDir, speed)
     } else {
+        //chaque frame sur place
         if (!char.isMoving) {
             applyMovementForce(char, new BABYLON.Vector3(0, 0, 0), 0)
             runAnim.stop(true, 1.0, runAnim.to, runAnim.from, false)
         }
         if (char.isMoving) {
-            console.log('not moving')
-            console.log('char.player', char.player)
-            console.log('rot', char.player.rotation.y)
-            var axis = new BABYLON.Vector3(0, 1, 0)
+        //   // première frame sur place
+        //   var direction2 = getForwardVector(camera);
+        //   const pos = char.player.getAbsolutePosition()
+        //   console.log('pos', pos)
+        //   var direction = char.player.getDirection(pos)
+        //   console.log('direction', direction);
 
-            // Définir l'angle de rotation en radians (45 degrés)
-            var angle = -Math.PI / 4
-            // char.player.rotate(axis, angle, BABYLON.Space.WORLD)
-            console.log('rot2', char.player.rotation.y)
-            char.isMoving = false
+        //   // Convertissez l'angle en radians (Babylon.js utilise des radians)
+        //   var angleInRadians = BABYLON.Tools.ToRadians(-40);
+          
+        //   // Créez une matrice de rotation autour de l'axe Y (pour une rotation antihoraire)
+        //   var rotationMatrix = BABYLON.Matrix.RotationAxis(BABYLON.Axis.Y, angleInRadians);
+          
+        //   // Appliquez la rotation au vecteur de direction
+        //   direction = BABYLON.Vector3.TransformNormal(direction, rotationMatrix);
+          
+        //   // Assurez-vous de normaliser le vecteur de direction pour qu'il ait une longueur de 1
+        //   direction.normalize();
+          
+        //   // Utilisez le nouveau vecteur de direction pour définir la direction
+        //   char.player.parent.setDirection(direction);
+        // console.log('directooin', direction)
+        // char.player.parent =
+        char.isMoving = false
         }
     }
 

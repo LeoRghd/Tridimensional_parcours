@@ -2,19 +2,23 @@ var loadPlayer = async (scene) => {
     const model = await BABYLON.SceneLoader.ImportMeshAsync(
         '',
         './utils/assets/',
-        'SkinModeling.glb',
+        'SkinModeling1.glb',
         scene
     )
-    const cylinder = BABYLON.MeshBuilder.CreateCylinder(
+    const cylinder = BABYLON.MeshBuilder.CreateCapsule(
         'cylinder',
-        { diameter: 0.5, height: 1.5 },
+        { radius: 0.5, height: 1.5 },
         scene
     )
     cylinder.position = new BABYLON.Vector3(0, 0.75, 0)
-    var axis = new BABYLON.Vector3(0, 1, 0)
-    var angle = -Math.PI / 4
+    // var axis = new BABYLON.Vector3(0, 1, 0)
+    // var angle = -Math.PI / 4
     cylinder.isVisible = false
     player = model.meshes[0]
+    console.log('ispickable', player.isPickable)
+    player.isPickable = false
+    console.log('ispickable', player.isPickable)
+
     // player.rotate(axis, angle, BABYLON.Space.WORLD)
     cylinder.addChild(player)
 
@@ -34,12 +38,17 @@ var loadPlayer = async (scene) => {
     )
     sphere2.position = new BABYLON.Vector3(0, 0.2, 0.3)
     sphere2.isVisible = true
+    console.log('ispickable', cylinder.isPickable)
+    cylinder.isPickable = false
+    console.log('ispickable', cylinder.isPickable)
+    
+    player.checkCollisions = false
     cylinder.addChild(sphere2)
 
     const playerAggregate = new BABYLON.PhysicsAggregate(
         cylinder,
         BABYLON.PhysicsShapeType.CYLINDER,
-        { mass: 0.1, restitution: 0 },
+        { mass: 1000, restitution: 0 },
         scene
     )
     playerAggregate.body.setMotionType(BABYLON.PhysicsMotionType.DYNAMIC)
