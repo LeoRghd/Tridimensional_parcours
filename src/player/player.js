@@ -2,7 +2,7 @@ var loadPlayer = async (scene) => {
     const model = await BABYLON.SceneLoader.ImportMeshAsync(
         '',
         './utils/assets/',
-        'SkinModeling1.glb',
+        'SkinModeling6.glb',
         scene
     )
     const cylinder = BABYLON.MeshBuilder.CreateCapsule(
