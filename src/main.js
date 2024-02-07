@@ -3,15 +3,33 @@ var engine = new BABYLON.Engine(canvas, true)
 
 var app = {}
 app.state = 'menu'
+app.isLocked = 'false'
 app.game = {}
 app.menu = {}
+app.pause = {}
 app.char = {}
 app.ray = {}
 app.ground = {}
 app.crossHair = {}
 app.char.isMoving = false
 app.char.isInAir = false
-app.isPaused = false
+
+const onOffPause = (lock) => {
+    if (lock) {
+        app.isPaused = false
+    } else {
+        app.isPaused = true
+    }
+    console.log('app.isPaused', app.isPaused)
+}
+
+document.addEventListener('pointerlockchange', function () {
+    console.log('event')
+    if (!document.pointerLockElement) {
+        // Afficher une interface de pause avec des instructions pour continuer
+        onOffPause(false) // Assurez-vous d'implémenter cette fonction
+    }
+})
 
 const loadModel = async (scene) => {
     const player = await loadPlayer(scene)
@@ -113,6 +131,7 @@ const setupGameLogic = async function (app) {
     app.char = await loadModel(app.game.scene)
     app.game.camera = createCamera(app.game.scene, app.char.player)
     app = createMenuScene(app)
+    app = createPauseScene(app)
     const tower = mapTower.forEach((position) => {
         createTower(10, 70, 10, position.x, position.z, app.game.scene)
     })
@@ -122,17 +141,17 @@ const setupGameLogic = async function (app) {
 
     engine.runRenderLoop(function () {
         switch (app.state) {
-          case 'menu':
-            app.menu.scene.render()
-          break
-          case 'game':
-            if (!app.isPaused) {
-              app.game.scene.render()
-            }
-          // case 'settings':
-          //   app.settings.scene.render()
-          // case 'pause':
-          //   app.pause.settings
+            case 'menu':
+                app.menu.scene.render()
+                break
+            case 'game':
+                if (!app.isPaused) {
+                    canvas.requestPointerLock()
+                    app.game.scene.render()
+                }
+                if (app.isPaused) {
+                    app.pause.scene.render()
+                }
             default:
                 break
         }

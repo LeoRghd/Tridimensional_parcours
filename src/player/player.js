@@ -28,7 +28,7 @@ var loadPlayer = async (scene) => {
         scene
     )
     sphere.position = new BABYLON.Vector3(0, 2.5, 0)
-    sphere.isVisible = false
+    sphere.isVisible = true
     cylinder.addChild(sphere)
 
     const sphere2 = BABYLON.MeshBuilder.CreateSphere(
@@ -41,7 +41,7 @@ var loadPlayer = async (scene) => {
     console.log('ispickable', cylinder.isPickable)
     cylinder.isPickable = false
     console.log('ispickable', cylinder.isPickable)
-    
+
     player.checkCollisions = false
     cylinder.addChild(sphere2)
 
