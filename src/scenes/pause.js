@@ -40,7 +40,7 @@ var createPauseScene = function (app) {
     button.onPointerDownObservable.add(function () {
         // canvas.requestPointerLock()
         console.log('click on pause')
-        onOffPause(true)
+        return (app.isPaused = false)
     })
     panel.addControl(button)
     app.pause.scene = scene
