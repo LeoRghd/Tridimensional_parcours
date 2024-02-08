@@ -109,12 +109,7 @@ const setupGameLogic = async function (app) {
             app.char,
             app.game.camera
         )
-        for (var i = 0; i < app.game.scene.meshes.length; i++) {
-            if (app.game.scene.meshes[i].isVisible == true) {
-                app.game.scene.meshes[i].checkCollisions = true
-            }
-        }
-
+        app = cameraColision(app)
 
         // app.char = handleJump(keyStatus, app.game.scene, app.char)
         // app.char = checkForPlayerRotate(app.char)
