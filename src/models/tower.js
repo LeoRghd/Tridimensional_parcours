@@ -1,6 +1,6 @@
 var createTower = function (w, h, d, x, z, scene) {
     var tower = BABYLON.MeshBuilder.CreateBox(
-        'tower',
+        'touch',
         { width: w, height: h, depth: d },
         scene
     )

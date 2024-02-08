@@ -17,6 +17,7 @@ var loadPlayer = async (scene) => {
     player = model.meshes[0]
     console.log('ispickable', player.isPickable)
     player.isPickable = false
+    player.isVisible = false
     console.log('ispickable', player.isPickable)
 
     // player.rotate(axis, angle, BABYLON.Space.WORLD)
@@ -28,7 +29,7 @@ var loadPlayer = async (scene) => {
         scene
     )
     sphere.position = new BABYLON.Vector3(0, 2.5, 0)
-    sphere.isVisible = true
+    sphere.isVisible = false
     cylinder.addChild(sphere)
 
     const sphere2 = BABYLON.MeshBuilder.CreateSphere(
@@ -36,7 +37,7 @@ var loadPlayer = async (scene) => {
         { diameter: 0.1 },
         scene
     )
-    sphere2.position = new BABYLON.Vector3(0, 0.2, 0.3)
+    sphere2.position = new BABYLON.Vector3(0, 0.9, 0.3)
     sphere2.isVisible = true
     console.log('ispickable', cylinder.isPickable)
     cylinder.isPickable = false

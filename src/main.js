@@ -8,7 +8,7 @@ app.game = {}
 app.menu = {}
 app.pause = {}
 app.char = {}
-app.ray = {}
+app.ray = false
 app.ground = {}
 app.crossHair = {}
 app.char.isMoving = false
@@ -35,7 +35,6 @@ const loadModel = async (scene) => {
     return player
 }
 
-
 const loadSphere = function (scene) {
     const sphere = BABYLON.MeshBuilder.CreateSphere(
         'sphere',
@@ -58,6 +57,13 @@ const loadSphere = function (scene) {
     sphereBody.shape = sphereShape
 }
 
+const runRay = function () {
+    var ray = raycast(app.char.player, app.game.camera, app.game.scene, app.ray, app.crossHair.textTexture)
+    console.log('ray', ray);
+    app.ray = ray.previousRay
+    app.crossHair.textTexture = ray.textTexture
+  }
+
 const createScene = async function () {
     const scene = new BABYLON.Scene(engine)
     const havokInstance = await HavokPhysics()
@@ -69,7 +75,7 @@ const createScene = async function () {
     // loadSphere(scene);
 
     applyGroundTexture(CreateGround(scene), scene)
-    scene.collisionsEnabled = true;
+    scene.collisionsEnabled = true
     return scene
 }
 
@@ -99,15 +105,14 @@ const setupGameLogic = async function (app) {
             app.game.camera
         )
         for (var i = 0; i < app.game.scene.meshes.length; i++) {
-          if(app.game.scene.meshes[i].isVisible == true){
-          app.game.scene.meshes[i].checkCollisions = true;
-          }
-      }
+            if (app.game.scene.meshes[i].isVisible == true) {
+                app.game.scene.meshes[i].checkCollisions = true
+            }
+        }
         // app.ray = raycast(
-        //     app.game.scene,
-        //     app.game.camera,
         //     app.char.player,
-        //     app.crossHair.textTexture,
+        //     app.game.camera,
+        //     app.game.scene,
         //     app.ray
         // )
 
