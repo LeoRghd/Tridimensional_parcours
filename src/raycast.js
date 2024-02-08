@@ -47,10 +47,8 @@ const raycast = function (player, camera, scene, previousRay, textTexture) {
 
     var firstHit = null
     var secondHit = null
-    console.log('pickResults.lenght', pickResults.length)
     for (var i = 0; i < pickResults.length; i++) {
         var pickResult = pickResults[i]
-        console.log('pickResult', pickResult.pickedMesh.id)
 
         if (pickResult.hit) {
             if (!firstHit) {
@@ -62,7 +60,6 @@ const raycast = function (player, camera, scene, previousRay, textTexture) {
         }
     }
     var lastHit = handleHit(firstHit, secondHit)
-    console.log('lastHit', lastHit)
     if (!lastHit) {
         textTexture = dynamicCrosshair(null, textTexture)
         previousRay = rayHelper

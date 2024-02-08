@@ -16,8 +16,9 @@ var getKeyStatus = function (scene) {
         BABYLON.ActionManager.OnKeyDownTrigger,
         (event) => {
         let key = event.sourceEvent.key;
+        //key input for test 
         if (key == 'e') {
-          runRay()
+          // runRay()
         }
         if (key == " "){
             key = "space"

@@ -58,11 +58,16 @@ const loadSphere = function (scene) {
 }
 
 const runRay = function () {
-    var ray = raycast(app.char.player, app.game.camera, app.game.scene, app.ray, app.crossHair.textTexture)
-    console.log('ray', ray);
+    var ray = raycast(
+        app.char.player,
+        app.game.camera,
+        app.game.scene,
+        app.ray,
+        app.crossHair.textTexture
+    )
     app.ray = ray.previousRay
     app.crossHair.textTexture = ray.textTexture
-  }
+}
 
 const createScene = async function () {
     const scene = new BABYLON.Scene(engine)
@@ -109,15 +114,21 @@ const setupGameLogic = async function (app) {
                 app.game.scene.meshes[i].checkCollisions = true
             }
         }
-        // app.ray = raycast(
-        //     app.char.player,
-        //     app.game.camera,
-        //     app.game.scene,
-        //     app.ray
-        // )
+
 
         // app.char = handleJump(keyStatus, app.game.scene, app.char)
         // app.char = checkForPlayerRotate(app.char)
+    })
+    app.game.scene.registerBeforeRender(function () {
+        var ray = raycast(
+            app.char.player,
+            app.game.camera,
+            app.game.scene,
+            app.ray,
+            app.crossHair.textTexture
+        )
+        app.ray = ray.previousRay
+        app.crossHair.textTexture = ray.textTexture
     })
     return app
 }
