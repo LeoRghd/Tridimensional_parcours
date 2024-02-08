@@ -18,6 +18,6 @@ function createFollowCamera(scene, player, lock) {
         return element.name === 'head'
     })
     camera.setTarget(head)
-
+    camera.checkCollisions = true;
     return camera
 }

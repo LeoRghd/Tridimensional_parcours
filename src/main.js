@@ -24,7 +24,6 @@ const onOffPause = (lock) => {
 }
 
 document.addEventListener('pointerlockchange', function () {
-    console.log('event')
     if (!document.pointerLockElement) {
         // Afficher une interface de pause avec des instructions pour continuer
         onOffPause(false) // Assurez-vous d'implémenter cette fonction
@@ -36,18 +35,6 @@ const loadModel = async (scene) => {
     return player
 }
 
-// const loadBox = function (scene) {
-//     const box = BABYLON.MeshBuilder.CreateBox('box', { size: 20 }, scene)
-//     box.position = new BABYLON.Vector3(10, 10, 0)
-//     const boxAggregate = new BABYLON.PhysicsAggregate(
-//         box,
-//         BABYLON.PhysicsShapeType.BOX,
-//         { mass: 100000, restitution: 0.1 },
-//         scene
-//     )
-//     boxAggregate.body.setMotionType(BABYLON.PhysicsMotionType.static)
-//     boxAggregate.body.disablePreStep = false
-// }
 
 const loadSphere = function (scene) {
     const sphere = BABYLON.MeshBuilder.CreateSphere(
@@ -82,7 +69,7 @@ const createScene = async function () {
     // loadSphere(scene);
 
     applyGroundTexture(CreateGround(scene), scene)
-
+    scene.collisionsEnabled = true;
     return scene
 }
 
@@ -111,6 +98,11 @@ const setupGameLogic = async function (app) {
             app.char,
             app.game.camera
         )
+        for (var i = 0; i < app.game.scene.meshes.length; i++) {
+          if(app.game.scene.meshes[i].isVisible == true){
+          app.game.scene.meshes[i].checkCollisions = true;
+          }
+      }
         // app.ray = raycast(
         //     app.game.scene,
         //     app.game.camera,
