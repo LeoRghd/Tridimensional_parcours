@@ -1,9 +1,10 @@
-
 counter = 0
 
 const getForwardVector = function (camera) {
     let cameraDirection = camera.getForwardRay().direction
-    return new BABYLON.Vector3(cameraDirection.x, 0, cameraDirection.z)
+    const forward = new BABYLON.Vector3(cameraDirection.x, 0, cameraDirection.z)
+    forward.normalize()
+    return forward
 }
 
 const applyMovementForce = function (char, direction, speed) {
@@ -43,7 +44,10 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
         if (keyStatus.space) {
             console.log('counter', counter++)
             // console.log("before impulse", char.playerAggregate.body.getLinearVelocity())
-            char.playerAggregate.body.applyImpulse(new BABYLON.Vector3(0, 100000, 0), char.player.getAbsolutePosition())
+            char.playerAggregate.body.applyImpulse(
+                new BABYLON.Vector3(0, 100000, 0),
+                char.player.getAbsolutePosition()
+            )
             // console.log("after impulse", char.playerAggregate.body.getLinearVelocity())
             // keyStatus.space = false
         }
@@ -163,30 +167,30 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
             runAnim.stop(true, 1.0, runAnim.to, runAnim.from, false)
         }
         if (char.isMoving) {
-        //   // première frame sur place
-        //   var direction2 = getForwardVector(camera);
-        //   const pos = char.player.getAbsolutePosition()
-        //   console.log('pos', pos)
-        //   var direction = char.player.getDirection(pos)
-        //   console.log('direction', direction);
+            //   // première frame sur place
+            //   var direction2 = getForwardVector(camera);
+            //   const pos = char.player.getAbsolutePosition()
+            //   console.log('pos', pos)
+            //   var direction = char.player.getDirection(pos)
+            //   console.log('direction', direction);
 
-        //   // Convertissez l'angle en radians (Babylon.js utilise des radians)
-        //   var angleInRadians = BABYLON.Tools.ToRadians(-40);
-          
-        //   // Créez une matrice de rotation autour de l'axe Y (pour une rotation antihoraire)
-        //   var rotationMatrix = BABYLON.Matrix.RotationAxis(BABYLON.Axis.Y, angleInRadians);
-          
-        //   // Appliquez la rotation au vecteur de direction
-        //   direction = BABYLON.Vector3.TransformNormal(direction, rotationMatrix);
-          
-        //   // Assurez-vous de normaliser le vecteur de direction pour qu'il ait une longueur de 1
-        //   direction.normalize();
-          
-        //   // Utilisez le nouveau vecteur de direction pour définir la direction
-        //   char.player.parent.setDirection(direction);
-        // console.log('directooin', direction)
-        // char.player.parent =
-        char.isMoving = false
+            //   // Convertissez l'angle en radians (Babylon.js utilise des radians)
+            //   var angleInRadians = BABYLON.Tools.ToRadians(-40);
+
+            //   // Créez une matrice de rotation autour de l'axe Y (pour une rotation antihoraire)
+            //   var rotationMatrix = BABYLON.Matrix.RotationAxis(BABYLON.Axis.Y, angleInRadians);
+
+            //   // Appliquez la rotation au vecteur de direction
+            //   direction = BABYLON.Vector3.TransformNormal(direction, rotationMatrix);
+
+            //   // Assurez-vous de normaliser le vecteur de direction pour qu'il ait une longueur de 1
+            //   direction.normalize();
+
+            //   // Utilisez le nouveau vecteur de direction pour définir la direction
+            //   char.player.parent.setDirection(direction);
+            // console.log('directooin', direction)
+            // char.player.parent =
+            char.isMoving = false
         }
     }
 

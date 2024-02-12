@@ -6,6 +6,13 @@ const handleHit = function (firstHit, secondHit) {
             firstHit = secondHit
             secondHit = null
         }
+    } else if (
+        firstHit &&
+        firstHit.pickedMesh.id === 'touch' &&
+        secondHit &&
+        secondHit.pickedMesh.id === 'touch'
+    ) {
+        firstHit = secondHit
     }
     return firstHit
 }
@@ -68,7 +75,7 @@ const raycast = function (player, camera, scene, previousRay, textTexture) {
     if (lastHit) {
         rayHelper.dispose()
         let rayHelper2 = new BABYLON.RayHelper(ray)
-        rayHelper2.show(scene,  new BABYLON.Color3(0, 255, 0))
+        rayHelper2.show(scene, new BABYLON.Color3(0, 255, 0))
         previousRay = rayHelper2
     }
     var hitPoint = lastHit.pickedPoint
