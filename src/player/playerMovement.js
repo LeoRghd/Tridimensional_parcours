@@ -7,6 +7,48 @@ const getForwardVector = function (camera) {
     return forward
 }
 
+function updateGroundState(char, scene) {
+    // Point de départ du raycast - légèrement au-dessus du personnage
+    // Direction du raycast - vers le bas
+    const cylinder = char.player.parent
+    const feet = cylinder.getChildren().find(function (element) {
+        return element.name === 'feet'
+    })
+    var spherePosition = feet.getAbsolutePosition().clone()
+    const rayDirection = new BABYLON.Vector3(0, -1, 0)
+    // Longueur du rayon
+    const rayLength = 0.3 // Ajustez cette valeur en fonction de la hauteur de votre personnage au-dessus du sol
+
+    // Créer le rayon
+    const ray = new BABYLON.Ray(spherePosition, rayDirection, rayLength)
+    // Visualiser le rayon pour le débogage (facultatif)
+    if (char.groundRay) {
+        char.groundRay.dispose()
+    }
+    let rayHelper = new BABYLON.RayHelper(ray)
+    rayHelper.show(scene, new BABYLON.Color3(255, 0, 0))
+    char.groundRay = rayHelper
+    // Effectuer le raycast
+    const hit = scene.pickWithRay(ray, (mesh) => {
+        return mesh.isPickable && mesh.isEnabled() // Assurez-vous de tester uniquement les meshs qui sont pickables et activés
+    })
+
+    // Mettre à jour l'état au sol
+    if (hit.hit && hit.pickedMesh) {
+        // Le rayon a touché un mesh, le personnage est considéré comme étant au sol
+        rayHelper.dispose()
+        let rayHelper2 = new BABYLON.RayHelper(ray)
+        rayHelper2.show(scene, new BABYLON.Color3(0, 255, 0))
+        char.groundRay = rayHelper2
+        char.isOnGround = true
+    } else {
+        // Le rayon n'a touché aucun mesh, le personnage n'est pas au sol
+        char.isOnGround = false
+    }
+    console.log('char.isOnGround', char.isOnGround)
+    return char
+}
+
 const applyMovementForce = function (char, direction, speed) {
     let force = direction.scale(speed)
     // console.log('force', force)
@@ -16,6 +58,7 @@ const applyMovementForce = function (char, direction, speed) {
 }
 
 var handlePlayerMovement = function (keyStatus, scene, char, camera) {
+    // char.isOnGround = state.isOnGround
     const runAnim = scene.getAnimationGroupByName('Run')
     const jumpAnim = scene.getAnimationGroupByName('Jump')
     const idleAnim = scene.getAnimationGroupByName('Idle')
@@ -40,16 +83,14 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
         runAnim.start(true, 1.0, runAnim.from, runAnim.to, false)
 
         let movementDir = new BABYLON.Vector3(0, 0, 0)
-
+        //Jump
         if (keyStatus.space) {
-            console.log('counter', counter++)
-            // console.log("before impulse", char.playerAggregate.body.getLinearVelocity())
+            const jumpForce = new BABYLON.Vector3(0, 1000, 0) // Ajustez la force selon le besoin
+            // Supposons que `playerAggregate` est votre personnage avec une physique appliquée
             char.playerAggregate.body.applyImpulse(
-                new BABYLON.Vector3(0, 100000, 0),
-                char.player.getAbsolutePosition()
+                jumpForce,
+                char.player.position
             )
-            // console.log("after impulse", char.playerAggregate.body.getLinearVelocity())
-            // keyStatus.space = false
         }
 
         // Forward + Left

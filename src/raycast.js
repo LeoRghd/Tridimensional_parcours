@@ -23,7 +23,6 @@ const raycast = function (player, camera, scene, previousRay, textTexture) {
     const crotch = cylinder.getChildren().find(function (element) {
         return element.name === 'crotch'
     })
-    crotch.isVisible = false
     var spherePosition = crotch.getAbsolutePosition().clone()
 
     // Obtenez la position de la caméra

@@ -115,15 +115,19 @@ const setupGameLogic = async function (app) {
         // app.char = checkForPlayerRotate(app.char)
     })
     app.game.scene.registerBeforeRender(function () {
-        var ray = raycast(
+        app.char = updateGroundState(app.char, app.game.scene)
+        // console.log('groundRay', groundRay)
+        // app.char.isOnGround = groundRay.isOnGround
+        // app.char.groundRay = groundRay.groundRay
+        var hookRay = raycast(
             app.char.player,
             app.game.camera,
             app.game.scene,
             app.ray,
             app.crossHair.textTexture
         )
-        app.ray = ray.previousRay
-        app.crossHair.textTexture = ray.textTexture
+        app.ray = hookRay.previousRay
+        app.crossHair.textTexture = hookRay.textTexture
     })
     return app
 }
@@ -132,6 +136,8 @@ const setupGameLogic = async function (app) {
 ;(async () => {
     app.game.scene = await createScene()
     app.char = await loadModel(app.game.scene)
+    app.char.isOnGround = true
+    app.char.groundRay = false
     app.game.camera = createCamera(app.game.scene, app.char.player)
     app = createMenuScene(app)
     app = createPauseScene(app)
@@ -151,6 +157,8 @@ const setupGameLogic = async function (app) {
                 if (!app.isPaused) {
                     canvas.requestPointerLock()
                     app.game.scene.render()
+                    //Inspecteur BABYLON !!!
+                    // app.game.scene.debugLayer.show()
                 }
                 if (app.isPaused) {
                     app.pause.scene.render()
