@@ -106,18 +106,22 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
 
     // Appeler les fonctions d'action appropriées en fonction des keyStatus
     if (keyStatus.z && char.isOnGround) {
+        char.isMoving = true
         char = moveForward(char, camera, scene)
     }
 
     if (keyStatus.s && char.isOnGround) {
+        char.isMoving = true
         char = moveBackward(char, camera, scene)
     }
 
     if (keyStatus.q && char.isOnGround) {
+        char.isMoving = true
         char = moveLeft(char, camera, scene)
     }
 
     if (keyStatus.d && char.isOnGround) {
+        char.isMoving = true
         char = moveRight(char, camera, scene)
     }
 
@@ -135,6 +139,7 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
     ) {
         char.isMoving = false
         runAnim.stop(true, 1.0, runAnim.to, runAnim.from, false)
+        char.playerAggregate.body.setLinearVelocity(BABYLON.Vector3.Zero())
     }
 
     return char

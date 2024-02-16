@@ -84,6 +84,7 @@ function moveRight(char, camera, scene) {
         Math.PI / 2
     )
     applyMovementForce(char, movementDir, speed)
+    
 
     return char
 }
