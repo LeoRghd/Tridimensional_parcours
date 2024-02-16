@@ -94,7 +94,6 @@ function jump(char, camera, scene) {
     if (char.isOnGround && !char.isJumping) {
         char.isJumping = true
         char.jumpFrameCount = 0
-        jumpAnim.start(true)
     }
 
     return char
