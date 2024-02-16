@@ -37,7 +37,7 @@ const loadModel = async (scene) => {
 
 const loadSphere = function (scene) {
     const sphere = BABYLON.MeshBuilder.CreateSphere(
-        'sphere',
+        'touch',
         { diameter: 3 },
         scene
     )
@@ -77,7 +77,7 @@ const createScene = async function () {
 
     createLight(scene)
     // loadBox(scene)
-    // loadSphere(scene);
+    loadSphere(scene)
 
     applyGroundTexture(CreateGround(scene), scene)
     scene.collisionsEnabled = true
@@ -103,22 +103,20 @@ const setupGameLogic = async function (app) {
     // gizmoManager.positionGizmoEnabled = true
     // gizmoManager.attachToMesh(player)
     app.game.scene.onBeforeRenderObservable.add(() => {
+        // app.char = handleJump(keyStatus, app.game.scene, app.char)
+        // app.char = checkForPlayerRotate(app.char)
+        app = cameraColision(app)
+    })
+    app.game.scene.registerBeforeRender(function () {
         app.char = handlePlayerMovement(
             keyStatus,
             app.game.scene,
             app.char,
             app.game.camera
         )
-        app = cameraColision(app)
-
-        // app.char = handleJump(keyStatus, app.game.scene, app.char)
-        // app.char = checkForPlayerRotate(app.char)
-    })
-    app.game.scene.registerBeforeRender(function () {
         app.char = updateGroundState(app.char, app.game.scene)
-        // console.log('groundRay', groundRay)
-        // app.char.isOnGround = groundRay.isOnGround
-        // app.char.groundRay = groundRay.groundRay
+        app.char = updateJump(app.char)
+        // app.char = updateGravity(app.char)
         var hookRay = raycast(
             app.char.player,
             app.game.camera,
@@ -141,6 +139,8 @@ const setupGameLogic = async function (app) {
     app.game.camera = createCamera(app.game.scene, app.char.player)
     app = createMenuScene(app)
     app = createPauseScene(app)
+    // app.fps = addFpsCounter(app.game.scene, app.game.camera)
+    // console.log('app.fps', app.fps)
     const tower = mapTower.forEach((position) => {
         createTower(10, 70, 10, position.x, position.z, app.game.scene)
     })

@@ -11,11 +11,12 @@ var loadPlayer = async (scene) => {
         scene
     )
     cylinder.position = new BABYLON.Vector3(0, 0.75, 0)
-    cylinder.isVisible = false
+    cylinder.isVisible = true
+    cylinder.isPickable = false
     player = model.meshes[0]
     console.log('ispickable', player.isPickable)
     player.isPickable = false
-    player.isVisible = false
+    player.isVisible = true
     console.log('ispickable', player.isPickable)
 
     // player.rotate(axis, angle, BABYLON.Space.WORLD)
@@ -27,7 +28,7 @@ var loadPlayer = async (scene) => {
         scene
     )
     sphere.position = new BABYLON.Vector3(0, 2.5, 0)
-    sphere.isVisible = false
+    sphere.isVisible = true
     cylinder.addChild(sphere)
 
     const sphere2 = BABYLON.MeshBuilder.CreateSphere(
@@ -37,10 +38,8 @@ var loadPlayer = async (scene) => {
     )
     sphere2.position = new BABYLON.Vector3(0, 0.9, 0.1)
     sphere2.isVisible = true
-    console.log('ispickable', cylinder.isPickable)
-    cylinder.isVisible = false
-    cylinder.isPickable = false
-    console.log('ispickable', cylinder.isPickable)
+    sphere2.isPickable = false
+
     player.checkCollisions = false
     cylinder.addChild(sphere2)
 
@@ -49,15 +48,15 @@ var loadPlayer = async (scene) => {
         { diameter: 0.1 },
         scene
     )
-    sphere3.position = new BABYLON.Vector3(0, 0.2, 0)
-    sphere3.isVisible = false
+    sphere3.position = new BABYLON.Vector3(0, 0.1, 0)
+    sphere3.isVisible = true
     sphere3.isPickable = false
     cylinder.addChild(sphere3)
 
     const playerAggregate = new BABYLON.PhysicsAggregate(
         cylinder,
         BABYLON.PhysicsShapeType.CYLINDER,
-        { mass: 1, restitution: 0.1 },
+        { mass: 1, restitution: 0.25 },
         scene
     )
     playerAggregate.body.setMotionType(BABYLON.PhysicsMotionType.DYNAMIC)
