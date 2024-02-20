@@ -115,8 +115,7 @@ const setupGameLogic = async function (app) {
             app.game.camera
         )
         app.char = updateGroundState(app.char, app.game.scene)
-        app.char = updateJump(app.char)
-        // app.char = updateGravity(app.char)
+        if (app.char.isOnGround || app.char.isJumping || app.char.isOnAir) app.char = updateJump(app.char, app.game.scene)
         var hookRay = raycast(
             app.char.player,
             app.game.camera,

@@ -8,40 +8,38 @@ const getForwardVector = function (camera) {
     forward.normalize()
     return forward
 }
-function updateJump(char) {
-    const maxJumpFrames = 5 // Ajustez cette valeur selon vos besoins (correspond à environ 500 ms à 60 FPS)
 
+function updateJump(char, scene) {
+    const fallAnim = scene.getAnimationGroupByName('Fall')
+
+    const vert = char.playerAggregate.body.getLinearVelocity()
+    let maxJumpFrames = 2 // Ajustez cette valeur selon vos besoins (correspond à environ 500 ms à 60 FPS)
+    if (vert.y < 0) {
+        char.isFalling = true
+
+        // jumpAnim = scene.getAnimationGroupByName('Jump')
+        // jumpAnim.stop(true, 1.0, jumpAnim.from, jumpAnim.to, false)
+        // char.isFalling = true
+
+        // fallAnim.start(true, 0.1, fallAnim.from, fallAnim.to, false)
+    }
     if (char.isJumping) {
         // Incrémenter le compteur de trames
         char.jumpFrameCount++
 
-        // Si le compteur de trames dépasse la durée maximale du saut, arrêtez le saut
         if (char.jumpFrameCount >= maxJumpFrames) {
             char.isJumping = false
+            char.isOnAir = true
             return char
         }
 
-        // Appliquer une impulsion de saut à chaque trame
-        // const jumpForce = new BABYLON.Vector3(0, 10000, 0) // Ajustez la force du saut selon vos besoins
         let currentVelocity = char.playerAggregate.body.getLinearVelocity()
 
-        // Ajouter une composante de saut à la vélocité actuelle
-        currentVelocity.y += 5 // Ajustez la hauteur du saut selon vos besoins
+        currentVelocity.y += 7 // Ajustez la hauteur du saut selon vos besoins
 
-        // Définir la nouvelle vélocité linéaire avec la composante de saut ajoutée
         char.playerAggregate.body.setLinearVelocity(currentVelocity)
     } else {
-        // Réinitialiser le compteur de trames et le sautFrameCount lorsque le saut est terminé
         char.jumpFrameCount = 0
-    }
-    return char
-}
-
-function updateGravity(char) {
-    // Si le personnage est en train de sauter, appliquer une force de gravité
-    if (!char.isOnGround) {
-        const gravity = new BABYLON.Vector3(0, -9.8, 0) // Ajustez la gravité selon vos besoins
-        char.playerAggregate.body.applyForce(gravity)
     }
     return char
 }
@@ -49,6 +47,7 @@ function updateGravity(char) {
 function updateGroundState(char, scene) {
     // Point de départ du raycast - légèrement au-dessus du personnage
     // Direction du raycast - vers le bas
+    const fallAnim = scene.getAnimationGroupByName('Fall')
     const cylinder = char.player.parent
     const feet = cylinder.getChildren().find(function (element) {
         return element.name === 'feet'
@@ -56,7 +55,7 @@ function updateGroundState(char, scene) {
     var spherePosition = feet.getAbsolutePosition().clone()
     const rayDirection = new BABYLON.Vector3(0, -1, 0)
     // Longueur du rayon
-    const rayLength = 0.3 // Ajustez cette valeur en fonction de la hauteur de votre personnage au-dessus du sol
+    const rayLength = 0.2 // Ajustez cette valeur en fonction de la hauteur de votre personnage au-dessus du sol
 
     // Créer le rayon
     const ray = new BABYLON.Ray(spherePosition, rayDirection, rayLength)
@@ -84,6 +83,9 @@ function updateGroundState(char, scene) {
 
         char.groundRay = rayHelper2
         char.isOnGround = true
+        char.isFalling = false
+        char.isOnAir = false
+        fallAnim.stop(true, 0.5, fallAnim.from, fallAnim.to, false)
     } else {
         // Le rayon n'a touché aucun mesh, le personnage n'est pas au sol
         char.isOnGround = false
@@ -94,15 +96,15 @@ function updateGroundState(char, scene) {
 
 const applyMovementForce = function (char, direction, speed) {
     let force = direction.scale(speed)
-    let currentVelocity = char.playerAggregate.body.getLinearVelocity()
-    currentVelocity.addInPlace(force)
-    char.playerAggregate.body.setLinearVelocity(currentVelocity)
+    // let currentVelocity = char.playerAggregate.body.getLinearVelocity()
+    // currentVelocity.addInPlace(force)
+    char.playerAggregate.body.setLinearVelocity(force)
 }
 
 var handlePlayerMovement = function (keyStatus, scene, char, camera) {
     const runAnim = scene.getAnimationGroupByName('Run')
-    const jumpAnim = scene.getAnimationGroupByName('Jump')
     const idleAnim = scene.getAnimationGroupByName('Idle')
+    const fallAnim = scene.getAnimationGroupByName('Fall')
 
     // Appeler les fonctions d'action appropriées en fonction des keyStatus
     if (keyStatus.z && char.isOnGround) {
@@ -126,6 +128,8 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
     }
 
     if (keyStatus.space && char.isOnGround && !char.isJumping) {
+        idleAnim.stop(true, 1.0, idleAnim.from, idleAnim.to, false)
+        runAnim.stop(true, 1.0, runAnim.to, runAnim.from, false)
         char = jump(char, camera, scene)
     }
 
@@ -135,11 +139,12 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
         !keyStatus.s &&
         !keyStatus.q &&
         !keyStatus.d &&
-        !keyStatus.space
+        !char.isOnAir
     ) {
         char.isMoving = false
         runAnim.stop(true, 1.0, runAnim.to, runAnim.from, false)
         char.playerAggregate.body.setLinearVelocity(BABYLON.Vector3.Zero())
+        idleAnim.start(true, 1.0, idleAnim.from, idleAnim.to, false)
     }
 
     return char

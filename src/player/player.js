@@ -2,7 +2,7 @@ var loadPlayer = async (scene) => {
     const model = await BABYLON.SceneLoader.ImportMeshAsync(
         '',
         './utils/assets/',
-        'SkinModeling6.glb',
+        'SkinModeling2.glb',
         scene
     )
     const cylinder = BABYLON.MeshBuilder.CreateCapsule(
@@ -11,7 +11,7 @@ var loadPlayer = async (scene) => {
         scene
     )
     cylinder.position = new BABYLON.Vector3(0, 0.75, 0)
-    cylinder.isVisible = true
+    cylinder.isVisible = false
     cylinder.isPickable = false
     player = model.meshes[0]
     console.log('ispickable', player.isPickable)
