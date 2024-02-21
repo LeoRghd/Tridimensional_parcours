@@ -53,6 +53,26 @@ var loadPlayer = async (scene) => {
     sphere3.isPickable = false
     cylinder.addChild(sphere3)
 
+    const leftHook = new BABYLON.MeshBuilder.CreateSphere(
+        'leftHook',
+        { diameter: 0.1 },
+        scene
+    )
+    leftHook.position = new BABYLON.Vector3(0.3, 0.9, 0)
+    leftHook.isVisible = true
+    leftHook.isPickable = false
+    cylinder.addChild(leftHook)
+    
+    const rightHook = new BABYLON.MeshBuilder.CreateSphere(
+        'rightHook',
+        { diameter: 0.1 },
+        scene
+    )
+    rightHook.position = new BABYLON.Vector3(-0.3, 0.9, 0)
+    rightHook.isVisible = true
+    rightHook.isPickable = false
+    cylinder.addChild(rightHook)
+
     const playerAggregate = new BABYLON.PhysicsAggregate(
         cylinder,
         BABYLON.PhysicsShapeType.CYLINDER,

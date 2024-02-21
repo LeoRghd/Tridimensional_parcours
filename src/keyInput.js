@@ -11,6 +11,36 @@ var getKeyStatus = function (scene) {
 
     scene.actionManager = new BABYLON.ActionManager(scene)
 
+    // Pour le clic gauche
+    document.addEventListener('mousedown', function (event) {
+        if (event.button == 0) {
+            console.log('left click')
+            keyStatus.leftClick = true
+        }
+    })
+
+    document.addEventListener('mouseup', function (event) {
+        if (event.button == 0) {
+            keyStatus.leftClick = false
+        }
+    })
+
+    // Pour le clic droit
+    document.addEventListener('mousedown', function (event) {
+        if (event.button == 2) {
+            console.log('right click')
+            event.preventDefault() // Pour empêcher l'apparition du menu contextuel
+            keyStatus.rightClick = true
+        }
+    })
+
+    document.addEventListener('mouseup', function (event) {
+        if (event.button == 2) {
+            event.preventDefault() // Pour empêcher l'apparition du menu contextuel
+            keyStatus.rightClick = false
+        }
+    })
+
     scene.actionManager.registerAction(
         new BABYLON.ExecuteCodeAction(
             BABYLON.ActionManager.OnKeyDownTrigger,

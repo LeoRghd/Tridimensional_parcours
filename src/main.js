@@ -99,12 +99,8 @@ const applyGroundTexture = function (ground, scene) {
 
 const setupGameLogic = async function (app) {
     const keyStatus = getKeyStatus(app.game.scene)
-    // let gizmoManager = new BABYLON.GizmoManager(app.game.scene)
-    // gizmoManager.positionGizmoEnabled = true
-    // gizmoManager.attachToMesh(player)
+
     app.game.scene.onBeforeRenderObservable.add(() => {
-        // app.char = handleJump(keyStatus, app.game.scene, app.char)
-        // app.char = checkForPlayerRotate(app.char)
         app = cameraColision(app)
     })
     app.game.scene.registerBeforeRender(function () {
