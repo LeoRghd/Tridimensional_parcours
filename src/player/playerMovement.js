@@ -14,14 +14,14 @@ function updateJump(char, scene) {
 
     const vert = char.playerAggregate.body.getLinearVelocity()
     let maxJumpFrames = 2 // Ajustez cette valeur selon vos besoins (correspond à environ 500 ms à 60 FPS)
+
     if (vert.y < 0) {
+        if (!char.isFalling) {
+            fallAnim.start(true, 0.1, fallAnim.from, fallAnim.to, false)  
+          char.isFalling = true
+        }
         char.isFalling = true
 
-        // jumpAnim = scene.getAnimationGroupByName('Jump')
-        // jumpAnim.stop(true, 1.0, jumpAnim.from, jumpAnim.to, false)
-        // char.isFalling = true
-
-        // fallAnim.start(true, 0.1, fallAnim.from, fallAnim.to, false)
     }
     if (char.isJumping) {
         // Incrémenter le compteur de trames
@@ -89,6 +89,7 @@ function updateGroundState(char, scene) {
     } else {
         // Le rayon n'a touché aucun mesh, le personnage n'est pas au sol
         char.isOnGround = false
+        char.isOnAir = true
     }
     // console.log('char.player.position.y', char.playerAggregate)
     return char
