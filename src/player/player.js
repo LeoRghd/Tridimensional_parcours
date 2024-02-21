@@ -16,7 +16,7 @@ var loadPlayer = async (scene) => {
     player = model.meshes[0]
     console.log('ispickable', player.isPickable)
     player.isPickable = false
-    player.isVisible = true
+    player.isVisible = false
     console.log('ispickable', player.isPickable)
 
     // player.rotate(axis, angle, BABYLON.Space.WORLD)
@@ -28,7 +28,7 @@ var loadPlayer = async (scene) => {
         scene
     )
     sphere.position = new BABYLON.Vector3(0, 2.5, 0)
-    sphere.isVisible = true
+    sphere.isVisible = false
     cylinder.addChild(sphere)
 
     const sphere2 = BABYLON.MeshBuilder.CreateSphere(
@@ -37,7 +37,7 @@ var loadPlayer = async (scene) => {
         scene
     )
     sphere2.position = new BABYLON.Vector3(0, 0.9, 0.1)
-    sphere2.isVisible = true
+    sphere2.isVisible = false
     sphere2.isPickable = false
 
     player.checkCollisions = false
@@ -49,29 +49,29 @@ var loadPlayer = async (scene) => {
         scene
     )
     sphere3.position = new BABYLON.Vector3(0, 0.1, 0)
-    sphere3.isVisible = true
+    sphere3.isVisible = false
     sphere3.isPickable = false
     cylinder.addChild(sphere3)
 
-    const leftHook = new BABYLON.MeshBuilder.CreateSphere(
-        'leftHook',
-        { diameter: 0.1 },
-        scene
-    )
-    leftHook.position = new BABYLON.Vector3(0.3, 0.9, 0)
-    leftHook.isVisible = true
-    leftHook.isPickable = false
-    cylinder.addChild(leftHook)
-    
     const rightHook = new BABYLON.MeshBuilder.CreateSphere(
-        'rightHook',
+        'right',
         { diameter: 0.1 },
         scene
     )
-    rightHook.position = new BABYLON.Vector3(-0.3, 0.9, 0)
+    rightHook.position = new BABYLON.Vector3(0.3, 0.9, 0)
     rightHook.isVisible = true
     rightHook.isPickable = false
     cylinder.addChild(rightHook)
+    
+    const leftHook = new BABYLON.MeshBuilder.CreateSphere(
+        'left',
+        { diameter: 0.1 },
+        scene
+    )
+    leftHook.position = new BABYLON.Vector3(-0.3, 0.9, 0)
+    leftHook.isVisible = true
+    leftHook.isPickable = false
+    cylinder.addChild(leftHook)
 
     const playerAggregate = new BABYLON.PhysicsAggregate(
         cylinder,

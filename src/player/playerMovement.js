@@ -17,11 +17,10 @@ function updateJump(char, scene) {
 
     if (vert.y < 0) {
         if (!char.isFalling) {
-            fallAnim.start(true, 0.1, fallAnim.from, fallAnim.to, false)  
-          char.isFalling = true
+            fallAnim.start(true, 0.1, fallAnim.from, fallAnim.to, false)
+            char.isFalling = true
         }
         char.isFalling = true
-
     }
     if (char.isJumping) {
         // Incrémenter le compteur de trames
@@ -134,6 +133,35 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
         char = jump(char, camera, scene)
     }
 
+    if (
+        (keyStatus.leftClick && !previousKeyStatus.leftClick) ||
+        (keyStatus.rightClick && !previousKeyStatus.rightClick)
+    ) {
+        if (keyStatus.leftClick) {
+          console.log('left click')
+            if (!char.hooks.left.isOn) {
+              console.log('left is on')
+                char.hooks.left.isThrown = true
+                char.hooks.left.isOn = true
+            } else if (char.hooks.left.isOn) {
+
+                char = cancelHook(char, 'left')
+            }
+        }
+        if (keyStatus.rightClick) {
+          console.log('right click')
+            if (!char.hooks.right.isOn) {
+              console.log('right is on')
+                char.hooks.right.isThrown = true
+                char.hooks.right.isOn = true
+            } else if (char.hooks.right.isOn) {
+                char = cancelHook(char, 'right')
+            }
+        }
+    }
+
+    // Mettre à jour previousKeyStatus à la fin de la fonction
+    previousKeyStatus = { ...keyStatus }
     // Reste du code pour arrêter l'animation de course, etc.
     if (
         !keyStatus.z &&

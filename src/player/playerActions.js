@@ -128,3 +128,4 @@ function jump(char, camera, scene) {
 
     return char
 }
+

@@ -7,12 +7,24 @@ app.isLocked = 'false'
 app.game = {}
 app.menu = {}
 app.pause = {}
-app.char = {}
+app.char = {
+    hooks: {
+        left: {
+            isOn: false,
+            isSet: false,
+            isThrown: false,
+        },
+        right: {
+            isOn: false,
+            isSet: false,
+            isThrown: false,
+        },
+    },
+    isMoving: false,
+}
 app.ray = false
 app.ground = {}
 app.crossHair = {}
-app.char.isMoving = false
-app.char.isInAir = false
 
 const onOffPause = (lock) => {
     if (lock) {
@@ -111,7 +123,8 @@ const setupGameLogic = async function (app) {
             app.game.camera
         )
         app.char = updateGroundState(app.char, app.game.scene)
-        if (app.char.isOnGround || app.char.isJumping || app.char.isOnAir) app.char = updateJump(app.char, app.game.scene)
+        if (app.char.isOnGround || app.char.isJumping || app.char.isOnAir)
+            app.char = updateJump(app.char, app.game.scene)
         var hookRay = raycast(
             app.char.player,
             app.game.camera,
@@ -119,6 +132,8 @@ const setupGameLogic = async function (app) {
             app.ray,
             app.crossHair.textTexture
         )
+        app.char = hookHandler(app.char, app.game.camera, app.game.scene, 'left')
+        app.char = hookHandler(app.char, app.game.camera, app.game.scene, 'right')
         app.ray = hookRay.previousRay
         app.crossHair.textTexture = hookRay.textTexture
     })
@@ -128,7 +143,8 @@ const setupGameLogic = async function (app) {
 //Main :
 ;(async () => {
     app.game.scene = await createScene()
-    app.char = await loadModel(app.game.scene)
+    let model = await loadModel(app.game.scene)
+    app.char = {...app.char, ...model}
     app.char.isOnGround = true
     app.char.groundRay = false
     app.game.camera = createCamera(app.game.scene, app.char.player)
