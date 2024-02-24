@@ -1,6 +1,6 @@
 counter = 0
 
-//TODO : No bounce, rays origin moving from hooks when walking
+//TODO : No bounce, rays origin moving from hooks when walking, hide left/right when hook is on, set max camera distance and maybe set camera higher, handle hook length logic 
 
 const getForwardVector = function (camera) {
     let cameraDirection = camera.getForwardRay().direction
@@ -142,7 +142,6 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
                 char.hooks.left.isThrown = true
                 char.hooks.left.isOn = true
             } else if (char.hooks.left.isOn) {
-
                 char = cancelHook(char, 'left')
             }
         }
