@@ -1,11 +1,22 @@
 function getDirection(pointA, pointB) {
     return pointB.subtract(pointA).normalize()
 }
+
+function calculateDistance(point1, point2) {
+  var dx = point2.x - point1.x;
+  var dy = point2.y - point1.y;
+  var dz = point2.z - point1.z;
+
+  return Math.sqrt(dx * dx + dy * dy + dz * dz);
+}
+
 function cancelHook(char, hookName) {
     char.hooks[hookName].isThrown = false
     char.hooks[hookName].direction = null
     char.hooks[hookName].length = 0
     char.hooks[hookName].isOn = false
+    char.hooks[hookName].isSet = false
+    char.hooks[hookName].pickedPoint = null
     char.hooks[hookName].previousRay.dispose()
     return char
 }
@@ -17,10 +28,31 @@ const getHookPosition = (player, hookName) => {
     return hookMesh ? hookMesh.getAbsolutePosition().clone() : null
 }
 
+function createRedPoint(scene, coordinates) {
+    var pointMaterial = new BABYLON.StandardMaterial('pointMaterial', scene)
+    pointMaterial.emissiveColor = new BABYLON.Color3(1, 0, 0) // Rouge
+
+    var point = BABYLON.MeshBuilder.CreateSphere(
+        'point',
+        { diameter: 0.5 },
+        scene
+    )
+    point.material = pointMaterial
+    point.position = coordinates
+    point.renderingGroupId = 1 // Dessine le point par-dessus les autres objets
+
+    return point
+}
+
 const hookHit = (scene, ray) => {
     var pickResults = scene.pickWithRay(ray)
     if (pickResults.hit && pickResults.pickedMesh.id === 'touch') {
-        return pickResults.pickedPoint
+        const hitResult = {
+            pickedPoint: pickResults.pickedPoint,
+            distance: pickResults.distance,
+        }
+        createRedPoint(scene, hitResult.pickedPoint)
+        return hitResult
     }
     return null
 }
@@ -45,10 +77,10 @@ const hookThrower = (char, camera, scene, hookName) => {
         console.log('camera direction')
         firstThrow = true
         char.hooks[hookName].direction = getCameraDirection(camera)
-        char.hooks[hookName].length = 1
+        char.hooks[hookName].size = 1
     }
 
-    char.hooks[hookName].length += 3.5
+    char.hooks[hookName].size += 3.5
     var rayMaterial = new BABYLON.StandardMaterial('rayMaterial', scene)
     rayMaterial.emissiveColor = new BABYLON.Color3(0, 0, 0) // Rouge
     rayMaterial.material = rayMaterial
@@ -56,7 +88,7 @@ const hookThrower = (char, camera, scene, hookName) => {
     var ray = new BABYLON.Ray(
         hookPosition,
         char.hooks[hookName].direction,
-        char.hooks[hookName].length
+        char.hooks[hookName].size
     )
 
     if (char.hooks[hookName].previousRay) {
@@ -67,12 +99,34 @@ const hookThrower = (char, camera, scene, hookName) => {
     let rayHelper = new BABYLON.RayHelper(ray)
     rayHelper.show(scene, new BABYLON.Color3(0, 0, 0))
     char.hooks[hookName].previousRay = rayHelper
-    if (char.hooks[hookName].length > 200) {
+    if (char.hooks[hookName].size > 200) {
         char = cancelHook(char, hookName)
     }
     // Vérifiez si le rayon a touché
     var hitPoint = hookHit(scene, ray)
+    if (hitPoint) console.log('hitPoint.distance', hitPoint.distance, '')
+    if (hitPoint && hitPoint.distance <= char.hooks[hookName].size) {
+        char.hooks[hookName].isOn = true
+        char.hooks[hookName].isThrown = false
+        char.hooks[hookName].isSet = true
+        char.hooks[hookName].pickedPoint = hitPoint.pickedPoint
+    }
+    return char
+}
 
+const hookSetter = (char, camera, scene, hookName) => {
+    var hookPosition = getHookPosition(char.player, hookName)
+    var pickedPoint = char.hooks[hookName].pickedPoint
+    var direction = getDirection(hookPosition, pickedPoint)
+    var distance = calculateDistance(hookPosition, pickedPoint)
+    var ray = new BABYLON.Ray(hookPosition, direction, distance)
+
+    if (char.hooks[hookName].previousRay) {
+        char.hooks[hookName].previousRay.dispose()
+    }
+    let rayHelper = new BABYLON.RayHelper(ray)
+    rayHelper.show(scene, new BABYLON.Color3(0, 0, 0))
+    char.hooks[hookName].previousRay = rayHelper
     return char
 }
 
@@ -80,5 +134,8 @@ const hookHandler = (char, camera, scene, hookName) => {
     if (!char.hooks[hookName].isOn) return char
     if (char.hooks[hookName].isThrown)
         char = hookThrower(char, camera, scene, hookName)
+    if (char.hooks[hookName].isSet) {
+        char = hookSetter(char, camera, scene, hookName)
+    }
     return char
 }

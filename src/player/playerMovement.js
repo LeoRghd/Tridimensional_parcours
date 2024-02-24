@@ -138,9 +138,7 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
         (keyStatus.rightClick && !previousKeyStatus.rightClick)
     ) {
         if (keyStatus.leftClick) {
-          console.log('left click')
             if (!char.hooks.left.isOn) {
-              console.log('left is on')
                 char.hooks.left.isThrown = true
                 char.hooks.left.isOn = true
             } else if (char.hooks.left.isOn) {
@@ -149,9 +147,7 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
             }
         }
         if (keyStatus.rightClick) {
-          console.log('right click')
             if (!char.hooks.right.isOn) {
-              console.log('right is on')
                 char.hooks.right.isThrown = true
                 char.hooks.right.isOn = true
             } else if (char.hooks.right.isOn) {
