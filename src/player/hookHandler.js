@@ -3,11 +3,11 @@ function getDirection(pointA, pointB) {
 }
 
 function calculateDistance(point1, point2) {
-  var dx = point2.x - point1.x;
-  var dy = point2.y - point1.y;
-  var dz = point2.z - point1.z;
+    var dx = point2.x - point1.x
+    var dy = point2.y - point1.y
+    var dz = point2.z - point1.z
 
-  return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    return Math.sqrt(dx * dx + dy * dy + dz * dz)
 }
 
 function cancelHook(char, hookName) {
@@ -17,7 +17,10 @@ function cancelHook(char, hookName) {
     char.hooks[hookName].isOn = false
     char.hooks[hookName].isSet = false
     char.hooks[hookName].pickedPoint = null
-    char.hooks[hookName].previousRay.dispose()
+    if (char.hooks[hookName].previousRay) {
+        char.hooks[hookName].previousRay.dispose()
+        char.hooks[hookName].previousRay = null
+    }
     return char
 }
 const getHookPosition = (player, hookName) => {
@@ -127,6 +130,13 @@ const hookSetter = (char, camera, scene, hookName) => {
     let rayHelper = new BABYLON.RayHelper(ray)
     rayHelper.show(scene, new BABYLON.Color3(0, 0, 0))
     char.hooks[hookName].previousRay = rayHelper
+    var currentLinearVelocity = char.playerAggregate.body.getLinearVelocity()
+
+    // Ajoutez la nouvelle vitesse à la vitesse linéaire actuelle
+    var newLinearVelocity = currentLinearVelocity.add(direction.scale(1))
+
+    // Définissez la nouvelle vitesse linéaire
+    char.playerAggregate.body.setLinearVelocity(newLinearVelocity)
     return char
 }
 

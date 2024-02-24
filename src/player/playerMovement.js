@@ -1,6 +1,6 @@
 counter = 0
 
-//TODO : No bounce, no falling when walking
+//TODO : No bounce, rays origin moving from hooks when walking
 
 const getForwardVector = function (camera) {
     let cameraDirection = camera.getForwardRay().direction
