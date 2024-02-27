@@ -1,6 +1,6 @@
 counter = 0
 
-//TODO : No bounce, rays origin moving from hooks when walking, set max camera distance and maybe set camera higher, handle hook length logic
+//TODO : No bounce, set max camera distance and maybe set camera higher, handle hook length logic
 
 const getForwardVector = function (camera) {
     let cameraDirection = camera.getForwardRay().direction

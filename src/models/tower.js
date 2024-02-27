@@ -5,10 +5,15 @@ var createTower = function (w, h, d, x, z, scene) {
         scene
     )
     tower.position.x = x
-    tower.position.y = h/2 // Positionnement pour que la base soit sur le sol
+    tower.position.y = h / 2 // Positionnement pour que la base soit sur le sol
     tower.position.z = z
     tower.checkCollisions = true
 
-    const towerAggregate = new BABYLON.PhysicsAggregate(tower, BABYLON.PhysicsShapeType.BOX, {mass: 0}, scene)
+    const towerAggregate = new BABYLON.PhysicsAggregate(
+        tower,
+        BABYLON.PhysicsShapeType.BOX,
+        { mass: 0, restitution: 0.1 },
+        scene
+    )
     return tower
 }
