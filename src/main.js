@@ -132,8 +132,20 @@ const setupGameLogic = async function (app) {
             app.ray,
             app.crossHair.textTexture
         )
-        app.char = hookHandler(app.char, app.game.camera, app.game.scene, 'left')
-        app.char = hookHandler(app.char, app.game.camera, app.game.scene, 'right')
+        app.char = hookHandler(
+            app.char,
+            app.game.camera,
+            app.game.scene,
+            'left',
+            app.crossHair.leftPlane
+        )
+        app.char = hookHandler(
+            app.char,
+            app.game.camera,
+            app.game.scene,
+            'right',
+            app.crossHair.rightPlane
+        )
         app.ray = hookRay.previousRay
         app.crossHair.textTexture = hookRay.textTexture
     })
@@ -144,7 +156,7 @@ const setupGameLogic = async function (app) {
 ;(async () => {
     app.game.scene = await createScene()
     let model = await loadModel(app.game.scene)
-    app.char = {...app.char, ...model}
+    app.char = { ...app.char, ...model }
     app.char.isOnGround = true
     app.char.groundRay = false
     app.game.camera = createCamera(app.game.scene, app.char.player)
@@ -156,7 +168,7 @@ const setupGameLogic = async function (app) {
         createTower(10, 70, 10, position.x, position.z, app.game.scene)
     })
     app.crossHair = addCrosshair(app.game.scene, app.game.camera)
-
+    console.log('crossHair', app.crossHair)
     app = await setupGameLogic(app)
 
     engine.runRenderLoop(function () {

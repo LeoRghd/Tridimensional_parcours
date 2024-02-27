@@ -71,6 +71,10 @@ const getCameraDirection = (camera) => {
 }
 
 const hookThrower = (char, camera, scene, hookName) => {
+    var color
+    hookName === 'left'
+        ? (color = new BABYLON.Color3(0, 101, 255))
+        : (color = new BABYLON.Color3(255, 93, 0))
     var hookPosition = getHookPosition(char.player, hookName)
     var cameraPosition = camera.position
     var firstThrow = false
@@ -85,7 +89,7 @@ const hookThrower = (char, camera, scene, hookName) => {
 
     char.hooks[hookName].size += 3.5
     var rayMaterial = new BABYLON.StandardMaterial('rayMaterial', scene)
-    rayMaterial.emissiveColor = new BABYLON.Color3(0, 0, 0) // Rouge
+    rayMaterial.emissiveColor = color // Rouge
     rayMaterial.material = rayMaterial
 
     var ray = new BABYLON.Ray(
@@ -100,7 +104,7 @@ const hookThrower = (char, camera, scene, hookName) => {
 
     // Créez un nouveau RayHelper et stockez-le dans char.hooks[hookName]
     let rayHelper = new BABYLON.RayHelper(ray)
-    rayHelper.show(scene, new BABYLON.Color3(0, 0, 0))
+    rayHelper.show(scene, color)
     char.hooks[hookName].previousRay = rayHelper
     if (char.hooks[hookName].size > 200) {
         char = cancelHook(char, hookName)
@@ -118,6 +122,10 @@ const hookThrower = (char, camera, scene, hookName) => {
 }
 
 const hookSetter = (char, camera, scene, hookName) => {
+    var color
+    hookName === 'left'
+        ? (color = new BABYLON.Color3(0, 101, 255))
+        : (color = new BABYLON.Color3(255, 93, 0))
     var hookPosition = getHookPosition(char.player, hookName)
     var pickedPoint = char.hooks[hookName].pickedPoint
     var direction = getDirection(hookPosition, pickedPoint)
@@ -128,7 +136,7 @@ const hookSetter = (char, camera, scene, hookName) => {
         char.hooks[hookName].previousRay.dispose()
     }
     let rayHelper = new BABYLON.RayHelper(ray)
-    rayHelper.show(scene, new BABYLON.Color3(0, 0, 0))
+    rayHelper.show(scene, color)
     char.hooks[hookName].previousRay = rayHelper
     var currentLinearVelocity = char.playerAggregate.body.getLinearVelocity()
 
@@ -140,12 +148,18 @@ const hookSetter = (char, camera, scene, hookName) => {
     return char
 }
 
-const hookHandler = (char, camera, scene, hookName) => {
-    if (!char.hooks[hookName].isOn) return char
+const hookHandler = (char, camera, scene, hookName, texture) => {
+    if (!char.hooks[hookName].isOn) {
+        texture.isVisible = true
+        return char
+    }
     if (char.hooks[hookName].isThrown)
         char = hookThrower(char, camera, scene, hookName)
     if (char.hooks[hookName].isSet) {
         char = hookSetter(char, camera, scene, hookName)
+    }
+    if (char.hooks[hookName].isOn) {
+        texture.isVisible = false
     }
     return char
 }

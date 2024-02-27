@@ -55,26 +55,60 @@ function addCrosshair(scene, camera) {
     let ctx = texture.getContext()
     let reticule
 
-    const createOutline = () => {
+    let textureLeftOutline = new BABYLON.DynamicTexture(
+        'leftOutline',
+        w,
+        scene,
+        false
+    )
+    textureLeftOutline.hasAlpha = true
+
+    let textureRightOutline = new BABYLON.DynamicTexture(
+        'rightOutline',
+        w,
+        scene,
+        false
+    )
+    textureRightOutline.hasAlpha = true
+
+    let ctxLeftOutline = textureLeftOutline.getContext()
+    let ctxRightOutline = textureRightOutline.getContext()
+
+    const createLeftOutline = () => {
         let c = 2
 
-        ctx.moveTo(c, w * 0.25)
-        ctx.lineTo(c, c)
-        ctx.lineTo(w * 0.25, c)
+        ctxLeftOutline.moveTo(c, w * 0.25)
+        ctxLeftOutline.lineTo(c, c)
+        ctxLeftOutline.lineTo(w * 0.25, c)
 
-        ctx.moveTo(w - c, w * 0.75)
-        ctx.lineTo(w - c, w - c)
-        ctx.lineTo(w * 0.75, w - c)
+        ctxLeftOutline.lineWidth = 5
+        ctxLeftOutline.strokeStyle = 'rgb(0,101,255)'
+        ctxLeftOutline.stroke()
 
-        ctx.lineWidth = 5
-        ctx.strokeStyle = white
-        ctx.stroke()
+        textureLeftOutline.update()
+
+        return textureLeftOutline
+    }
+
+    const createRightOutline = () => {
+        let c = 2
+
+        ctxRightOutline.moveTo(w - c, w * 0.75)
+        ctxRightOutline.lineTo(w - c, w - c)
+        ctxRightOutline.lineTo(w * 0.75, w - c)
+
+        ctxRightOutline.lineWidth = 5
+        ctxRightOutline.strokeStyle = 'rgb(255,154,0)'
+        ctxRightOutline.stroke()
+
+        textureRightOutline.update()
+
+        return textureRightOutline
     }
 
     const createNavigate = () => {
         ctx.fillStyle = 'transparent'
         ctx.clearRect(0, 0, w, w)
-        createOutline()
 
         ctx.strokeStyle = white
         ctx.lineWidth = 5
@@ -90,8 +124,45 @@ function addCrosshair(scene, camera) {
     }
 
     createNavigate()
-
+    let leftTexture = createLeftOutline()
+    let rightTexture = createRightOutline()
     let material = new BABYLON.StandardMaterial('reticule', scene)
+
+    let leftMaterial = new BABYLON.StandardMaterial('leftMaterial', scene)
+    leftMaterial.diffuseTexture = leftTexture
+    leftMaterial.opacityTexture = leftTexture
+    leftMaterial.emissiveColor.set(1, 1, 1)
+    leftMaterial.disableLighting = true
+
+    // Créer le maillage pour la texture gauche
+    let leftPlane = BABYLON.MeshBuilder.CreatePlane(
+        'leftPlane',
+        { size: 0.08 },
+        utilLayer.utilityLayerScene
+    )
+    leftPlane.material = leftMaterial
+    leftPlane.position.set(-0.04, 0, 1.1) // Ajustez la position comme nécessaire
+    leftPlane.isPickable = false
+    leftPlane.parent = camera
+
+    // Créer le matériau pour la texture droite
+    let rightMaterial = new BABYLON.StandardMaterial('rightMaterial', scene)
+    rightMaterial.diffuseTexture = rightTexture
+    rightMaterial.opacityTexture = rightTexture
+    rightMaterial.emissiveColor.set(1, 1, 1)
+    rightMaterial.disableLighting = true
+
+    // Créer le maillage pour la texture droite
+    let rightPlane = BABYLON.MeshBuilder.CreatePlane(
+        'rightPlane',
+        { size: 0.08 },
+        utilLayer.utilityLayerScene
+    )
+    rightPlane.material = rightMaterial
+    rightPlane.position.set(0.04, 0, 1.1) // Ajustez la position comme nécessaire
+    rightPlane.isPickable = false
+    rightPlane.parent = camera
+
     material.diffuseTexture = texture
     material.opacityTexture = texture
     material.emissiveColor.set(1, 1, 1)
@@ -141,5 +212,5 @@ function addCrosshair(scene, camera) {
     textPlane.position = new BABYLON.Vector3(0, -0.06, 1.1) // Position ajustée
     textPlane.parent = camera
 
-    return { reticule, textTexture }
+    return { reticule, textTexture, leftPlane, rightPlane }
 }
