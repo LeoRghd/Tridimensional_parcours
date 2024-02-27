@@ -15,5 +15,19 @@ function getSound(scene) {
         null,
         { loop: false, autoplay: false, volume: 0.7 }
     )
-    return { audioContext, throwHook, hookHit }
+    const hookReturned = new BABYLON.Sound(
+        'hookReturn',
+        'utils/sounds/hook_returned.wav',
+        scene,
+        null,
+        { loop: false, autoplay: false, volume: 0.7 }
+    )
+    const hookIn = new BABYLON.Sound(
+        'hookIn',
+        'utils/sounds/hook_in.wav',
+        scene,
+        null,
+        { loop: false, autoplay: false, volume: 0.7 }
+    )
+    return { audioContext, throwHook, hookHit, hookReturned, hookIn }
 }

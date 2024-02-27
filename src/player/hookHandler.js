@@ -15,6 +15,7 @@ function cancelHook(char, hookName) {
     char.hooks[hookName].direction = null
     char.hooks[hookName].length = 0
     char.hooks[hookName].isOn = false
+    char.hooks[hookName].isBack = false
     char.hooks[hookName].isSet = false
     char.hooks[hookName].pickedPoint = null
     if (char.hooks[hookName].previousRay) {
@@ -71,6 +72,34 @@ const getCameraDirection = (camera) => {
     return direction
 }
 
+const hookReturned = (char, camera, scene, hookName, sound) => {
+    var color
+    hookName === 'left'
+        ? (color = new BABYLON.Color3(0, 101, 255))
+        : (color = new BABYLON.Color3(255, 93, 0))
+    var hookPosition = getHookPosition(char.player, hookName)
+    char.hooks[hookName].size -= 3.5
+    var ray = new BABYLON.Ray(
+        hookPosition,
+        char.hooks[hookName].direction,
+        char.hooks[hookName].size
+    )
+
+    if (char.hooks[hookName].previousRay) {
+        char.hooks[hookName].previousRay.dispose()
+    }
+
+    let rayHelper = new BABYLON.RayHelper(ray)
+    rayHelper.show(scene, color)
+    char.hooks[hookName].previousRay = rayHelper
+
+    if (char.hooks[hookName].size <= 1) {
+        sound.hookReturned.play()
+        char = cancelHook(char, hookName)
+    }
+    return char
+}
+
 const hookThrower = (char, camera, scene, hookName, sound) => {
     var color
     hookName === 'left'
@@ -82,9 +111,7 @@ const hookThrower = (char, camera, scene, hookName, sound) => {
 
     // First frame of throw
     if (!char.hooks[hookName].direction) {
-        console.log('sound', sound)
-        console.log('camera direction')
-        // sound.throwHook.play()
+        sound.throwHook.play()
         firstThrow = true
         char.hooks[hookName].direction = getCameraDirection(camera)
         char.hooks[hookName].size = 1
@@ -110,7 +137,10 @@ const hookThrower = (char, camera, scene, hookName, sound) => {
     rayHelper.show(scene, color)
     char.hooks[hookName].previousRay = rayHelper
     if (char.hooks[hookName].size > 200) {
-        char = cancelHook(char, hookName)
+        sound.hookIn.play()
+        char.hooks[hookName].isBack = true
+        char.hooks[hookName].isThrown = false
+        // char = cancelHook(char, hookName)
     }
     // Vérifiez si le rayon a touché
     var hitPoint = hookHit(scene, ray)
@@ -162,6 +192,9 @@ const hookHandler = (char, camera, scene, hookName, texture, sound) => {
         char = hookThrower(char, camera, scene, hookName, sound)
     if (char.hooks[hookName].isSet) {
         char = hookSetter(char, camera, scene, hookName)
+    }
+    if (char.hooks[hookName].isBack) {
+        char = hookReturned(char, camera, scene, hookName, sound)
     }
     if (char.hooks[hookName].isOn) {
         texture.isVisible = false

@@ -1,6 +1,8 @@
 counter = 0
 
 //TODO : set max camera distance and maybe set camera higher, handle hook length logic
+//TODO: set hook back animation
+//TODO: make player facing hitpoint
 
 const getForwardVector = function (camera) {
     let cameraDirection = camera.getForwardRay().direction
