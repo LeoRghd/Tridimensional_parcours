@@ -28,7 +28,8 @@ const getHookPosition = (player, hookName) => {
     const hookMesh = cylinder.getChildren().find(function (element) {
         return element.name === hookName
     })
-    return hookMesh ? hookMesh.getAbsolutePosition().clone() : null
+    hookMesh.computeWorldMatrix(true)
+    return hookMesh ? hookMesh.getBoundingInfo().boundingBox.centerWorld : null
 }
 
 function createRedPoint(scene, coordinates) {
