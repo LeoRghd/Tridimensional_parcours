@@ -55,7 +55,7 @@ var createMenuScene = function (app) {
     playButton.background = 'green'
     playButton.onPointerUpObservable.add(function () {
         // canvas.requestPointerLock()
-
+        app.sound.audioContext.resume()
         return (app.state = 'game')
     })
     advancedTexture.addControl(playButton)

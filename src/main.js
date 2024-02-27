@@ -88,8 +88,9 @@ const createScene = async function () {
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), hk)
 
     createLight(scene)
+
     // loadBox(scene)
-    loadSphere(scene)
+    // loadSphere(scene)
 
     applyGroundTexture(CreateGround(scene), scene)
     scene.collisionsEnabled = true
@@ -137,14 +138,16 @@ const setupGameLogic = async function (app) {
             app.game.camera,
             app.game.scene,
             'left',
-            app.crossHair.leftPlane
+            app.crossHair.leftPlane,
+            app.sound
         )
         app.char = hookHandler(
             app.char,
             app.game.camera,
             app.game.scene,
             'right',
-            app.crossHair.rightPlane
+            app.crossHair.rightPlane,
+            app.sound
         )
         app.ray = hookRay.previousRay
         app.crossHair.textTexture = hookRay.textTexture
@@ -160,8 +163,10 @@ const setupGameLogic = async function (app) {
     app.char.isOnGround = true
     app.char.groundRay = false
     app.game.camera = createCamera(app.game.scene, app.char.player)
+    app.sound = getSound(app.game.scene)
     app = createMenuScene(app)
     app = createPauseScene(app)
+    console.log('app.sound', app.sound)
     // app.fps = addFpsCounter(app.game.scene, app.game.camera)
     // console.log('app.fps', app.fps)
     const tower = mapTower.forEach((position) => {

@@ -28,4 +28,3 @@ function getSmoke(scene, char) {
 
     return smokeSystem
 }
-// Commencez le système de particules

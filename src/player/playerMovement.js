@@ -1,6 +1,6 @@
 counter = 0
 
-//TODO : No bounce, set max camera distance and maybe set camera higher, handle hook length logic
+//TODO : set max camera distance and maybe set camera higher, handle hook length logic
 
 const getForwardVector = function (camera) {
     let cameraDirection = camera.getForwardRay().direction
@@ -170,6 +170,11 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
             console.log('STOOOOOOOOOOOOOOOOOOP')
             char.OnGaz = false
             char.smokeSystem.stop()
+        }
+    }
+    if (keyStatus.e) {
+        if (!char.wind) {
+            wind = getWind()
         }
     }
 

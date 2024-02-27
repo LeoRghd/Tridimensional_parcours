@@ -1,0 +1,19 @@
+function getSound(scene) {
+    var AudioContext = window.AudioContext || window.webkitAudioContext
+    var audioContext = new AudioContext()
+    const throwHook = new BABYLON.Sound(
+        'throwHook',
+        'utils/sounds/throw_hook.wav',
+        scene,
+        null,
+        { loop: false, autoplay: false, volume: 0.5 }
+    )
+    const hookHit = new BABYLON.Sound(
+        'hookHit',
+        'utils/sounds/hook_hit.wav',
+        scene,
+        null,
+        { loop: false, autoplay: false, volume: 0.7 }
+    )
+    return { audioContext, throwHook, hookHit }
+}

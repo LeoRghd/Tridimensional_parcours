@@ -5,6 +5,7 @@ var getKeyStatus = function (scene) {
         q: false,
         d: false,
         b: false,
+        e: false,
         Shift: false,
         space: false,
         leftClick: false,
@@ -51,9 +52,9 @@ var getKeyStatus = function (scene) {
             (event) => {
                 let key = event.sourceEvent.key
                 //key input for test
-                if (key == 'e') {
-                    // runRay()
-                }
+                // if (key == 'e') {
+                //     console.log('eeeee')
+                // }
                 if (key === 'Control') {
                     // Utilisez 'ctrl' au lieu de 'Control'
                     key = 'ctrl'

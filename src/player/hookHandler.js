@@ -71,7 +71,7 @@ const getCameraDirection = (camera) => {
     return direction
 }
 
-const hookThrower = (char, camera, scene, hookName) => {
+const hookThrower = (char, camera, scene, hookName, sound) => {
     var color
     hookName === 'left'
         ? (color = new BABYLON.Color3(0, 101, 255))
@@ -80,9 +80,11 @@ const hookThrower = (char, camera, scene, hookName) => {
     var cameraPosition = camera.position
     var firstThrow = false
 
-    // Calculez la direction du rayon
+    // First frame of throw
     if (!char.hooks[hookName].direction) {
+        console.log('sound', sound)
         console.log('camera direction')
+        // sound.throwHook.play()
         firstThrow = true
         char.hooks[hookName].direction = getCameraDirection(camera)
         char.hooks[hookName].size = 1
@@ -114,6 +116,8 @@ const hookThrower = (char, camera, scene, hookName) => {
     var hitPoint = hookHit(scene, ray)
     if (hitPoint) console.log('hitPoint.distance', hitPoint.distance, '')
     if (hitPoint && hitPoint.distance <= char.hooks[hookName].size) {
+        if (sound.throwHook.isPlaying) sound.throwHook.stop()
+        sound.hookHit.play()
         char.hooks[hookName].isOn = true
         char.hooks[hookName].isThrown = false
         char.hooks[hookName].isSet = true
@@ -149,13 +153,13 @@ const hookSetter = (char, camera, scene, hookName) => {
     return char
 }
 
-const hookHandler = (char, camera, scene, hookName, texture) => {
+const hookHandler = (char, camera, scene, hookName, texture, sound) => {
     if (!char.hooks[hookName].isOn) {
         texture.isVisible = true
         return char
     }
     if (char.hooks[hookName].isThrown)
-        char = hookThrower(char, camera, scene, hookName)
+        char = hookThrower(char, camera, scene, hookName, sound)
     if (char.hooks[hookName].isSet) {
         char = hookSetter(char, camera, scene, hookName)
     }
