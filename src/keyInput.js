@@ -9,6 +9,7 @@ var getKeyStatus = function (scene) {
         space: false,
         leftClick: false,
         rightClick: false,
+        ctrl: false,
     }
 
     scene.actionManager = new BABYLON.ActionManager(scene)
@@ -53,6 +54,10 @@ var getKeyStatus = function (scene) {
                 if (key == 'e') {
                     // runRay()
                 }
+                if (key === 'Control') {
+                    // Utilisez 'ctrl' au lieu de 'Control'
+                    key = 'ctrl'
+                }
                 if (key === ' ') {
                     // Utilisez 'Space' au lieu de ' '
                     key = 'space'
@@ -72,6 +77,10 @@ var getKeyStatus = function (scene) {
             BABYLON.ActionManager.OnKeyUpTrigger,
             (event) => {
                 let key = event.sourceEvent.key
+                if (key === 'Control') {
+                    // Utilisez 'ctrl' au lieu de 'Control'
+                    key = 'ctrl'
+                }
                 if (key === ' ') {
                     // Utilisez 'Space' au lieu de ' '
                     key = 'space'

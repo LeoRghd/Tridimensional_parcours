@@ -168,7 +168,6 @@ const setupGameLogic = async function (app) {
         createTower(10, 70, 10, position.x, position.z, app.game.scene)
     })
     app.crossHair = addCrosshair(app.game.scene, app.game.camera)
-    console.log('crossHair', app.crossHair)
     app = await setupGameLogic(app)
 
     engine.runRenderLoop(function () {

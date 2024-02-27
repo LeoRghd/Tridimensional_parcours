@@ -1,6 +1,6 @@
 counter = 0
 
-//TODO : No bounce, rays origin moving from hooks when walking, hide left/right when hook is on, set max camera distance and maybe set camera higher, handle hook length logic 
+//TODO : No bounce, rays origin moving from hooks when walking, set max camera distance and maybe set camera higher, handle hook length logic
 
 const getForwardVector = function (camera) {
     let cameraDirection = camera.getForwardRay().direction
@@ -102,6 +102,10 @@ const applyMovementForce = function (char, direction, speed) {
 }
 
 var handlePlayerMovement = function (keyStatus, scene, char, camera) {
+    if (!char.smokeSystem) {
+        const smokeSystem = getSmoke(scene, char)
+        char.smokeSystem = smokeSystem
+    }
     const runAnim = scene.getAnimationGroupByName('Run')
     const idleAnim = scene.getAnimationGroupByName('Idle')
     const fallAnim = scene.getAnimationGroupByName('Fall')
@@ -152,6 +156,20 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
             } else if (char.hooks.right.isOn) {
                 char = cancelHook(char, 'right')
             }
+        }
+    }
+    if (keyStatus.ctrl) {
+        console.log('ctrl')
+        if (!char.OnGaz) {
+            console.log('STAAAAAAAAART')
+            char.OnGaz = true
+            char.smokeSystem.start()
+        }
+    } else {
+        if (char.OnGaz) {
+            console.log('STOOOOOOOOOOOOOOOOOOP')
+            char.OnGaz = false
+            char.smokeSystem.stop()
         }
     }
 

@@ -14,10 +14,8 @@ var loadPlayer = async (scene) => {
     cylinder.isVisible = false
     cylinder.isPickable = false
     player = model.meshes[0]
-    console.log('ispickable', player.isPickable)
     player.isPickable = false
     player.isVisible = false
-    console.log('ispickable', player.isPickable)
 
     // player.rotate(axis, angle, BABYLON.Space.WORLD)
     cylinder.addChild(player)
@@ -62,7 +60,7 @@ var loadPlayer = async (scene) => {
     rightHook.isVisible = true
     rightHook.isPickable = false
     cylinder.addChild(rightHook)
-    
+
     const leftHook = new BABYLON.MeshBuilder.CreateSphere(
         'left',
         { diameter: 0.1 },
