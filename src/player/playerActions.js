@@ -9,8 +9,8 @@ const startFallAnimationLoop = (char, scene, fallAnim) => {
     )
 }
 
-function moveForward(char, camera, scene) {
-    const runAnim = scene.getAnimationGroupByName('Run')
+function moveForward(char, camera, scene, animation) {
+    // const runAnim = scene.getAnimationGroupByName('Run')
     let forward = getForwardVector(camera)
     let speed = 50
 
@@ -20,8 +20,14 @@ function moveForward(char, camera, scene) {
         // console.log('char.isOnAir', char.isOnAir)
         // console.log('char.isFalling', char.isFalling)
         // console.log('char', char);
-        
-        runAnim.start(true, 1.0, runAnim.from, runAnim.to, false)
+        animation.runAnim.start(
+            true,
+            1.0,
+            animation.runAnim.from,
+            animation.runAnim.to,
+            false
+        )
+        // runAnim.start(true, 1.0, runAnim.from, runAnim.to, false)
     }
 
     let movementDir = new BABYLON.Vector3(0, 0, 0)
@@ -34,13 +40,20 @@ function moveForward(char, camera, scene) {
 }
 
 // Fonction pour gérer l'action lorsque la touche S est enfoncée
-function moveBackward(char, camera, scene) {
+function moveBackward(char, camera, scene, animation) {
     const runAnim = scene.getAnimationGroupByName('Run')
     let forward = getForwardVector(camera)
     let speed = 50
 
     if (char.isMoving) {
-        runAnim.start(true, 1.0, runAnim.from, runAnim.to, false)
+        animation.runAnim.start(
+            true,
+            1.0,
+            animation.runAnim.from,
+            animation.runAnim.to,
+            false
+        )
+        // runAnim.start(true, 1.0, runAnim.from, runAnim.to, false)
     }
 
     let movementDir = new BABYLON.Vector3(0, 0, 0)
@@ -60,13 +73,20 @@ function moveBackward(char, camera, scene) {
 }
 
 // Fonction pour gérer l'action lorsque la touche Q est enfoncée
-function moveLeft(char, camera, scene) {
+function moveLeft(char, camera, scene, animation) {
     const runAnim = scene.getAnimationGroupByName('Run')
     let forward = getForwardVector(camera)
     let speed = 50
 
     if (char.isMoving) {
-        runAnim.start(true, 1.0, runAnim.from, runAnim.to, false)
+        animation.runAnim.start(
+            true,
+            1.0,
+            animation.runAnim.from,
+            animation.runAnim.to,
+            false
+        )
+        // runAnim.start(true, 1.0, runAnim.from, runAnim.to, false)
     }
 
     let movementDir = new BABYLON.Vector3(0, 0, 0)
@@ -82,13 +102,20 @@ function moveLeft(char, camera, scene) {
 }
 
 // Fonction pour gérer l'action lorsque la touche D est enfoncée
-function moveRight(char, camera, scene) {
+function moveRight(char, camera, scene, animation) {
     const runAnim = scene.getAnimationGroupByName('Run')
     let forward = getForwardVector(camera)
     let speed = 50
 
     if (char.isMoving) {
-        runAnim.start(true, 1.0, runAnim.from, runAnim.to, false)
+        animation.runAnim.start(
+            true,
+            1.0,
+            animation.runAnim.from,
+            animation.runAnim.to,
+            false
+        )
+        // runAnim.start(true, 1.0, runAnim.from, runAnim.to, false)
     }
 
     let movementDir = new BABYLON.Vector3(0, 0, 0)
@@ -106,21 +133,45 @@ function moveRight(char, camera, scene) {
 }
 
 // Fonction pour gérer l'action lorsque la touche d'espace est enfoncée
-function jump(char, camera, scene) {
+function jump(char, camera, scene, animation) {
     if (char.isOnGround && !char.isJumping) {
-        const jumpAnim = scene.getAnimationGroupByName('Jump')
-        const fallAnim = scene.getAnimationGroupByName('Fall')
-        const idleAnim = scene.getAnimationGroupByName('Idle')
-        idleAnim.stop(false, 1.0, idleAnim.from, idleAnim.to, false)
-        const jumpAnimatable = scene.beginAnimation(
-            char,
-            jumpAnim,
-            0,
-            Number.MAX_VALUE,
+        console.log('animation.jumpAnim', animation.jumpAnim.isStarted)
+        console.log('animation.idleAnim', animation.idleAnim.isStarted)
+        console.log('animation.runAnim', animation.runAnim.isStarted)
+        console.log('animation.fallAnim', animation.fallAnim.isStarted)
+        stopAllAnimation(animation)
+        console.log('animation.jumpAnim', animation.jumpAnim.isStarted)
+        console.log('animation.idleAnim', animation.idleAnim.isStarted)
+        console.log('animation.runAnim', animation.runAnim.isStarted)
+        console.log('animation.fallAnim', animation.fallAnim.isStarted)
+        animation.jumpAnim.start(
+            false,
+            1.5,
+            animation.jumpAnim.from,
+            animation.jumpAnim.to,
             false
         )
-        jumpAnimatable.onAnimationEnd = startFallAnimationLoop(char, scene, fallAnim)
-        jumpAnim.start(false, 2, jumpAnim.from, jumpAnim.to, false)
+        console.log('animation.jumpAnim', animation.jumpAnim.isStarted)
+        // animation.jumpAnim.start(
+        //     false,
+        //     2,
+        //     animation.jumpAnim.from,
+        //     animation.jumpAnim.to,
+        //     false
+        // )
+        // const jumpAnimatable = scene.beginAnimation(
+        //     char,
+        //     animation.jumpAnim,
+        //     0,
+        //     Number.MAX_VALUE,
+        //     false
+        // )
+        // jumpAnimatable.onAnimationEnd = startFallAnimationLoop(
+        //     char,
+        //     scene,
+        //     fallAnim
+        // )
+        // jumpAnim.start(false, 2, jumpAnim.from, jumpAnim.to, false)
         char.isJumping = true
         char.isOnAir = true
         char.jumpFrameCount = 0
@@ -128,4 +179,3 @@ function jump(char, camera, scene) {
 
     return char
 }
-

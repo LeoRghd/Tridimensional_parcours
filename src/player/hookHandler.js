@@ -33,9 +33,13 @@ const getHookPosition = (player, hookName) => {
     return hookMesh ? hookMesh.getBoundingInfo().boundingBox.centerWorld : null
 }
 
-function createRedPoint(scene, coordinates) {
+function createRedPoint(scene, coordinates, hookName) {
     var pointMaterial = new BABYLON.StandardMaterial('pointMaterial', scene)
-    pointMaterial.emissiveColor = new BABYLON.Color3(1, 0, 0) // Rouge
+    var color
+    hookName === 'left'
+        ? (color = new BABYLON.Color3(0, 101, 255))
+        : (color = new BABYLON.Color3(255, 93, 0))
+    pointMaterial.emissiveColor = color // Rouge
 
     var point = BABYLON.MeshBuilder.CreateSphere(
         'point',
@@ -49,15 +53,17 @@ function createRedPoint(scene, coordinates) {
     return point
 }
 
-const hookHit = (scene, ray) => {
+const hookHit = (scene, ray, hookName, sound) => {
     var pickResults = scene.pickWithRay(ray)
     if (pickResults.hit && pickResults.pickedMesh.id === 'touch') {
         const hitResult = {
             pickedPoint: pickResults.pickedPoint,
             distance: pickResults.distance,
         }
-        createRedPoint(scene, hitResult.pickedPoint)
-        return hitResult
+        if (sound.throwHook.isPlaying) sound.throwHook.stop()
+        sound.hookHit.play()
+        const hitMark = createRedPoint(scene, hitResult.pickedPoint, hookName)
+        return { hitResult, hitMark }
     }
     return null
 }
@@ -94,6 +100,7 @@ const hookReturned = (char, camera, scene, hookName, sound) => {
     char.hooks[hookName].previousRay = rayHelper
 
     if (char.hooks[hookName].size <= 1) {
+        if (sound.hookIn.isPlaying) sound.hookIn.stop()
         sound.hookReturned.play()
         char = cancelHook(char, hookName)
     }
@@ -143,11 +150,17 @@ const hookThrower = (char, camera, scene, hookName, sound) => {
         // char = cancelHook(char, hookName)
     }
     // Vérifiez si le rayon a touché
-    var hitPoint = hookHit(scene, ray)
+    var tmp = hookHit(scene, ray, hookName, sound)
+    hitPoint = tmp ? tmp.hitResult : null
+    hitMark = tmp ? tmp.hitMark : null
+    if (hitMark && char.hooks[hookName].hitMark) {
+        char.hooks[hookName].hitMark.dispose()
+    }
+    if (hitMark) {
+        char.hooks[hookName].hitMark = hitMark
+    }
     if (hitPoint) console.log('hitPoint.distance', hitPoint.distance, '')
     if (hitPoint && hitPoint.distance <= char.hooks[hookName].size) {
-        if (sound.throwHook.isPlaying) sound.throwHook.stop()
-        sound.hookHit.play()
         char.hooks[hookName].isOn = true
         char.hooks[hookName].isThrown = false
         char.hooks[hookName].isSet = true
@@ -174,12 +187,23 @@ const hookSetter = (char, camera, scene, hookName) => {
     rayHelper.show(scene, color)
     char.hooks[hookName].previousRay = rayHelper
     var currentLinearVelocity = char.playerAggregate.body.getLinearVelocity()
+    console.log('char.onGaz', char.onGaz)
+    if (char.onGaz) {
+        char.playerAggregate.body.setLinearVelocity(direction.scale(50))
+    } else {
+        const speed = 1
+        var currentLinearVelocity =
+            char.playerAggregate.body.getLinearVelocity()
 
+        var newLinearVelocity = currentLinearVelocity.add(
+            direction.scale(speed)
+        )
+        char.playerAggregate.body.setLinearVelocity(newLinearVelocity)
+    }
     // Ajoutez la nouvelle vitesse à la vitesse linéaire actuelle
-    var newLinearVelocity = currentLinearVelocity.add(direction.scale(1))
 
     // Définissez la nouvelle vitesse linéaire
-    char.playerAggregate.body.setLinearVelocity(newLinearVelocity)
+
     return char
 }
 

@@ -121,11 +121,12 @@ const setupGameLogic = async function (app) {
             keyStatus,
             app.game.scene,
             app.char,
-            app.game.camera
+            app.game.camera,
+            app.animation
         )
-        app.char = updateGroundState(app.char, app.game.scene)
         if (app.char.isOnGround || app.char.isJumping || app.char.isOnAir)
-            app.char = updateJump(app.char, app.game.scene)
+            app.char = updateJump(app.char, app.game.scene, app.animation)
+        app.char = updateGroundState(app.char, app.game.scene, app.animation)
         var hookRay = raycast(
             app.char.player,
             app.game.camera,
@@ -166,7 +167,7 @@ const setupGameLogic = async function (app) {
     app.sound = getSound(app.game.scene)
     app = createMenuScene(app)
     app = createPauseScene(app)
-    console.log('app.sound', app.sound)
+    app.animation = getAnimation(app.game.scene)
     // app.fps = addFpsCounter(app.game.scene, app.game.camera)
     // console.log('app.fps', app.fps)
     const tower = mapTower.forEach((position) => {

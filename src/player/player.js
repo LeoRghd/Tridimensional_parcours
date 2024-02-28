@@ -5,17 +5,23 @@ var loadPlayer = async (scene) => {
         'SkinModeling2.glb',
         scene
     )
+
+    var cylinderMaterial = new BABYLON.StandardMaterial(
+        'cylinderMaterial',
+        scene
+    )
+    cylinderMaterial.alpha = 0.5 // Rend le matériau semi-transparent
     const cylinder = BABYLON.MeshBuilder.CreateCapsule(
         'cylinder',
         { radius: 0.5, height: 1.5 },
         scene
     )
+    cylinder.material = cylinderMaterial
     cylinder.position = new BABYLON.Vector3(0, 0.75, 0)
-    cylinder.isVisible = false
+    cylinder.isVisible = true
     cylinder.isPickable = false
     player = model.meshes[0]
     player.isPickable = false
-    player.isVisible = false
 
     // player.rotate(axis, angle, BABYLON.Space.WORLD)
     cylinder.addChild(player)
@@ -27,6 +33,7 @@ var loadPlayer = async (scene) => {
     )
     sphere.position = new BABYLON.Vector3(0, 2.5, 0)
     sphere.isVisible = false
+    sphere.isPickable = false
     cylinder.addChild(sphere)
 
     const sphere2 = BABYLON.MeshBuilder.CreateSphere(
@@ -83,6 +90,12 @@ var loadPlayer = async (scene) => {
     })
 
     playerAggregate.body.disablePreStep = false
+    //i want to find a mesh named CH36 and set isPickable to false
+    scene.meshes.forEach((mesh) => {
+        if (mesh.name === 'Ch36') {
+            mesh.isPickable = false
+        }
+    })
 
     return { player, playerAggregate }
 }

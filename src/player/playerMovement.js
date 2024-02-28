@@ -1,5 +1,5 @@
 counter = 0
-
+//TODO: fix jump animation
 //TODO : set max camera distance and maybe set camera higher, handle hook length logic
 //TODO: set hook back animation
 //TODO: make player facing hitpoint
@@ -11,15 +11,22 @@ const getForwardVector = function (camera) {
     return forward
 }
 
-function updateJump(char, scene) {
-    const fallAnim = scene.getAnimationGroupByName('Fall')
+function updateJump(char, scene, animation) {
+    // const fallAnim = scene.getAnimationGroupByName('Fall')
 
     const vert = char.playerAggregate.body.getLinearVelocity()
-    let maxJumpFrames = 2 // Ajustez cette valeur selon vos besoins (correspond à environ 500 ms à 60 FPS)
+    let maxJumpFrames = 3 // Ajustez cette valeur selon vos besoins (correspond à environ 500 ms à 60 FPS)
 
     if (vert.y < 0) {
         if (!char.isFalling) {
-            fallAnim.start(true, 0.1, fallAnim.from, fallAnim.to, false)
+            animation.fallAnim.start(
+                true,
+                0.1,
+                animation.fallAnim.from,
+                animation.fallAnim.to,
+                false
+            )
+            // fallAnim.start(true, 0.1, fallAnim.from, fallAnim.to, false)
             char.isFalling = true
         }
         char.isFalling = true
@@ -36,7 +43,7 @@ function updateJump(char, scene) {
 
         let currentVelocity = char.playerAggregate.body.getLinearVelocity()
 
-        currentVelocity.y += 7 // Ajustez la hauteur du saut selon vos besoins
+        currentVelocity.y += 9 // Ajustez la hauteur du saut selon vos besoins
 
         char.playerAggregate.body.setLinearVelocity(currentVelocity)
     } else {
@@ -45,29 +52,28 @@ function updateJump(char, scene) {
     return char
 }
 
-function updateGroundState(char, scene) {
-    // Point de départ du raycast - légèrement au-dessus du personnage
-    // Direction du raycast - vers le bas
-    const fallAnim = scene.getAnimationGroupByName('Fall')
+function updateGroundState(char, scene, animation) {
     const cylinder = char.player.parent
-    const feet = cylinder.getChildren().find(function (element) {
-        return element.name === 'feet'
-    })
-    var spherePosition = feet.getAbsolutePosition().clone()
+
+    cylinder.computeWorldMatrix(true)
+    var spherePosition = cylinder
+        .getBoundingInfo()
+        .boundingBox.centerWorld.clone()
     const rayDirection = new BABYLON.Vector3(0, -1, 0)
     // Longueur du rayon
-    const rayLength = 0.2 // Ajustez cette valeur en fonction de la hauteur de votre personnage au-dessus du sol
+    const rayLength = 0.8 // Ajustez cette valeur en fonction de la hauteur de votre personnage au-dessus du sol
 
     // Créer le rayon
     const ray = new BABYLON.Ray(spherePosition, rayDirection, rayLength)
+    ray.renderingGroupId = 1
     // Visualiser le rayon pour le débogage (facultatif)
     if (char.groundRay) {
         char.groundRay.dispose()
     }
     let rayHelper = new BABYLON.RayHelper(ray)
-    rayHelper.show(scene, new BABYLON.Color3(255, 0, 0))
-    rayHelper.thickness = 0.05 // Augmentez l'épaisseur du rayon
 
+    rayHelper.show(scene, new BABYLON.Color3(255, 0, 0))
+    // Définir le groupe de rendu pour le rayon
     char.groundRay = rayHelper
     // Effectuer le raycast
     const hit = scene.pickWithRay(ray, (mesh) => {
@@ -75,20 +81,21 @@ function updateGroundState(char, scene) {
     })
 
     // Mettre à jour l'état au sol
+    if (hit.hit) console.log('hit', hit)
     if (hit.hit && hit.pickedMesh) {
+        console.log('mesh', hit.pickedMesh.name)
         // Le rayon a touché un mesh, le personnage est considéré comme étant au sol
         rayHelper.dispose()
         let rayHelper2 = new BABYLON.RayHelper(ray)
         rayHelper2.show(scene, new BABYLON.Color3(0, 255, 0))
         rayHelper2.thickness = 0.05 // Augmentez l'épaisseur du rayon
-
         char.groundRay = rayHelper2
         char.isOnGround = true
         char.isFalling = false
         char.isOnAir = false
-        fallAnim.stop(true, 0.5, fallAnim.from, fallAnim.to, false)
     } else {
         // Le rayon n'a touché aucun mesh, le personnage n'est pas au sol
+        animation.runAnim.stop()
         char.isOnGround = false
         char.isOnAir = true
     }
@@ -103,7 +110,13 @@ const applyMovementForce = function (char, direction, speed) {
     char.playerAggregate.body.setLinearVelocity(force)
 }
 
-var handlePlayerMovement = function (keyStatus, scene, char, camera) {
+var handlePlayerMovement = function (
+    keyStatus,
+    scene,
+    char,
+    camera,
+    animation
+) {
     if (!char.smokeSystem) {
         const smokeSystem = getSmoke(scene, char)
         char.smokeSystem = smokeSystem
@@ -115,28 +128,28 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
     // Appeler les fonctions d'action appropriées en fonction des keyStatus
     if (keyStatus.z && char.isOnGround) {
         char.isMoving = true
-        char = moveForward(char, camera, scene)
+        char = moveForward(char, camera, scene, animation)
     }
 
     if (keyStatus.s && char.isOnGround) {
         char.isMoving = true
-        char = moveBackward(char, camera, scene)
+        char = moveBackward(char, camera, scene, animation)
     }
 
     if (keyStatus.q && char.isOnGround) {
         char.isMoving = true
-        char = moveLeft(char, camera, scene)
+        char = moveLeft(char, camera, scene, animation)
     }
 
     if (keyStatus.d && char.isOnGround) {
         char.isMoving = true
-        char = moveRight(char, camera, scene)
+        char = moveRight(char, camera, scene, animation)
     }
 
     if (keyStatus.space && char.isOnGround && !char.isJumping) {
-        idleAnim.stop(true, 1.0, idleAnim.from, idleAnim.to, false)
-        runAnim.stop(true, 1.0, runAnim.to, runAnim.from, false)
-        char = jump(char, camera, scene)
+        console.log('space')
+        console.log
+        char = jump(char, camera, scene, animation)
     }
 
     if (
@@ -164,13 +177,13 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
         console.log('ctrl')
         if (!char.OnGaz) {
             console.log('STAAAAAAAAART')
-            char.OnGaz = true
+            char.onGaz = true
             char.smokeSystem.start()
         }
     } else {
         if (char.OnGaz) {
             console.log('STOOOOOOOOOOOOOOOOOOP')
-            char.OnGaz = false
+            char.onGaz = false
             char.smokeSystem.stop()
         }
     }
@@ -188,12 +201,19 @@ var handlePlayerMovement = function (keyStatus, scene, char, camera) {
         !keyStatus.s &&
         !keyStatus.q &&
         !keyStatus.d &&
-        !char.isOnAir
+        !char.isOnAir &&
+        !char.isJumping
     ) {
         char.isMoving = false
-        runAnim.stop(true, 1.0, runAnim.to, runAnim.from, false)
+        stopAllAnimation(animation)
+        animation.idleAnim.start(
+            true,
+            1.0,
+            animation.idleAnim.from,
+            animation.idleAnim.to,
+            false
+        )
         char.playerAggregate.body.setLinearVelocity(BABYLON.Vector3.Zero())
-        idleAnim.start(true, 1.0, idleAnim.from, idleAnim.to, false)
     }
 
     return char
