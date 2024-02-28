@@ -47,6 +47,21 @@ const loadModel = async (scene) => {
     return player
 }
 
+const createSkybox = function (scene) {
+    var skybox = BABYLON.Mesh.CreateBox('skyBox', 10000.0, scene)
+    var skyboxMaterial = new BABYLON.StandardMaterial('skyBox', scene)
+    skyboxMaterial.backFaceCulling = false
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(
+        'utils/textures/cube',
+        scene
+    )
+    skyboxMaterial.reflectionTexture.coordinatesMode =
+        BABYLON.Texture.SKYBOX_MODE
+    skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0)
+    skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0)
+    skybox.material = skyboxMaterial
+}
+
 const loadSphere = function (scene) {
     const sphere = BABYLON.MeshBuilder.CreateSphere(
         'touch',
@@ -122,7 +137,8 @@ const setupGameLogic = async function (app) {
             app.game.scene,
             app.char,
             app.game.camera,
-            app.animation
+            app.animation,
+            app.sound
         )
         if (app.char.isOnGround || app.char.isJumping || app.char.isOnAir)
             app.char = updateJump(app.char, app.game.scene, app.animation)
@@ -159,6 +175,7 @@ const setupGameLogic = async function (app) {
 //Main :
 ;(async () => {
     app.game.scene = await createScene()
+    createSkybox(app.game.scene)
     let model = await loadModel(app.game.scene)
     app.char = { ...app.char, ...model }
     app.char.isOnGround = true
@@ -171,7 +188,7 @@ const setupGameLogic = async function (app) {
     // app.fps = addFpsCounter(app.game.scene, app.game.camera)
     // console.log('app.fps', app.fps)
     const tower = mapTower.forEach((position) => {
-        createTower(10, 70, 10, position.x, position.z, app.game.scene)
+        createTower(10, 700, 10, position.x, position.z, app.game.scene)
     })
     app.crossHair = addCrosshair(app.game.scene, app.game.camera)
     app = await setupGameLogic(app)

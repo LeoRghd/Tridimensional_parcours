@@ -1,7 +1,7 @@
 var CreateGround = function (scene) {
     var ground = BABYLON.MeshBuilder.CreateGround(
         'touch',
-        { width: 1000, height: 1000 },
+        { width: 10000, height: 10000 },
         scene
     )
     ground.position = new BABYLON.Vector3(0, 0, 0)

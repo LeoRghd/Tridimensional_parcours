@@ -29,5 +29,12 @@ function getSound(scene) {
         null,
         { loop: false, autoplay: false, volume: 0.7 }
     )
-    return { audioContext, throwHook, hookHit, hookReturned, hookIn }
+    const gasBurst = new BABYLON.Sound(
+        'gasBurst',
+        'utils/sounds/gas_burst.wav',
+        scene,
+        null,
+        { loop: false, autoplay: false, volume: 0.7 }
+    )
+    return { audioContext, throwHook, hookHit, hookReturned, hookIn, gasBurst }
 }

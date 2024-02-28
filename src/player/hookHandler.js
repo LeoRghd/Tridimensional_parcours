@@ -187,9 +187,11 @@ const hookSetter = (char, camera, scene, hookName) => {
     rayHelper.show(scene, color)
     char.hooks[hookName].previousRay = rayHelper
     var currentLinearVelocity = char.playerAggregate.body.getLinearVelocity()
-    console.log('char.onGaz', char.onGaz)
-    if (char.onGaz) {
+    if (char.onGaz && !char.onGround) {
         char.playerAggregate.body.setLinearVelocity(direction.scale(50))
+    }
+    if (char.outGaz && !char.onGround) {
+        char.playerAggregate.body.setLinearVelocity(direction.scale(-50))
     } else {
         const speed = 1
         var currentLinearVelocity =

@@ -1,30 +1,49 @@
 // Créer le système de particules
-function getSmoke(scene, char) {
-    let smokeSystem = new BABYLON.ParticleSystem('particles', 2000, scene)
-    smokeSystem.particleTexture = new BABYLON.Texture(
-        'utils/textures/smoke.png',
-        scene
-    )
-    smokeSystem.emitter = char.player
-    smokeSystem.minEmitBox = new BABYLON.Vector3(-0.1, 0, -0.1) // Zone d'émission minimale
-    smokeSystem.maxEmitBox = new BABYLON.Vector3(0.1, 0, 0.1) // Zone d'émission maximale
+function getSmokes(scene, char) {
+    let In = new BABYLON.ParticleSystem('particles', 2000, scene)
+    In.particleTexture = new BABYLON.Texture('utils/textures/smoke.png', scene)
+    In.emitter = char.player
+    In.minEmitBox = new BABYLON.Vector3(-0.1, 0, -0.1) // Zone d'émission minimale
+    In.maxEmitBox = new BABYLON.Vector3(0.1, 0, 0.1) // Zone d'émission maximale
 
     // Couleurs de la fumée
-    smokeSystem.color1 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0)
-    smokeSystem.color2 = new BABYLON.Color4(0.1, 0.1, 0.1, 1.0)
-    smokeSystem.colorDead = new BABYLON.Color4(0, 0, 0, 0.0)
+    In.color1 = new BABYLON.Color4(0.949, 0.047, 0.047)
+    In.color2 = new BABYLON.Color4(0.949, 0.047, 0.047)
+    In.colorDead = new BABYLON.Color4(0, 0, 0, 0.0)
 
     // Taille de la fumée
-    smokeSystem.minSize = 0.3
-    smokeSystem.maxSize = 1.5
+    In.minSize = 0.3
+    In.maxSize = 1.5
 
     // Durée de vie de la fumée
-    smokeSystem.minLifeTime = 0.5
-    smokeSystem.maxLifeTime = 1
+    In.minLifeTime = 0.5
+    In.maxLifeTime = 1
 
     // Vitesse de la fumée
-    smokeSystem.emitRate = 500
-    console.log('smokeSystem', smokeSystem)
+    In.emitRate = 500
+    console.log('In', In)
 
-    return smokeSystem
+    let Out = new BABYLON.ParticleSystem('particles', 2000, scene)
+    Out.particleTexture = new BABYLON.Texture('utils/textures/smoke.png', scene)
+    Out.emitter = char.player
+    Out.minEmitBox = new BABYLON.Vector3(-0.1, 0, -0.1) // Zone d'émission minimale
+    Out.maxEmitBox = new BABYLON.Vector3(0.1, 0, 0.1) // Zone d'émission maximale
+
+    // Couleurs de la fumée
+    Out.color1 = new BABYLON.Color4(0.02, 0.98, 0.047)
+    Out.color2 = new BABYLON.Color4(0.02, 0.98, 0.047)
+    Out.colorDead = new BABYLON.Color4(0, 0, 0, 0.0)
+
+    // Taille de la fumée
+    Out.minSize = 0.3
+    Out.maxSize = 1.5
+
+    // Durée de vie de la fumée
+    Out.minLifeTime = 0.5
+    Out.maxLifeTime = 1
+
+    // Vitesse de la fumée
+    Out.emitRate = 500
+    console.log('Out', Out)
+    return { In, Out }
 }

@@ -81,9 +81,7 @@ function updateGroundState(char, scene, animation) {
     })
 
     // Mettre à jour l'état au sol
-    if (hit.hit) console.log('hit', hit)
     if (hit.hit && hit.pickedMesh) {
-        console.log('mesh', hit.pickedMesh.name)
         // Le rayon a touché un mesh, le personnage est considéré comme étant au sol
         rayHelper.dispose()
         let rayHelper2 = new BABYLON.RayHelper(ray)
@@ -115,10 +113,11 @@ var handlePlayerMovement = function (
     scene,
     char,
     camera,
-    animation
+    animation,
+    sound
 ) {
     if (!char.smokeSystem) {
-        const smokeSystem = getSmoke(scene, char)
+        const smokeSystem = getSmokes(scene, char)
         char.smokeSystem = smokeSystem
     }
     const runAnim = scene.getAnimationGroupByName('Run')
@@ -173,23 +172,33 @@ var handlePlayerMovement = function (
             }
         }
     }
-    if (keyStatus.ctrl) {
-        console.log('ctrl')
-        if (!char.OnGaz) {
-            console.log('STAAAAAAAAART')
+    if (keyStatus.ctrl && !keyStatus.e) {
+        if (!char.onGaz) {
+            console.log('sound.gasBurst', sound.gasBurst)
+            sound.gasBurst.play()
+            char.outGaz = false
             char.onGaz = true
-            char.smokeSystem.start()
+            char.smokeSystem.In.start()
         }
     } else {
-        if (char.OnGaz) {
-            console.log('STOOOOOOOOOOOOOOOOOOP')
-            char.onGaz = false
-            char.smokeSystem.stop()
+        if (char.onGaz) {
+            char.outGaz = false
+            char.smokeSystem.In.stop()
         }
     }
-    if (keyStatus.e) {
-        if (!char.wind) {
-            wind = getWind()
+    if (keyStatus.e && !keyStatus.ctrl) {
+        if (!char.outGaz) {
+            console.log('sound.gasBurst2222', sound.gasBurst)
+
+            sound.gasBurst.play()
+            char.outGaz = true
+            char.onGaz = false
+            char.smokeSystem.Out.start()
+        }
+    } else {
+        if (char.outGaz) {
+            char.outGaz = false
+            char.smokeSystem.Out.stop()
         }
     }
 
