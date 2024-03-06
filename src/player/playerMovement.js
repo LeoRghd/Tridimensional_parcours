@@ -182,7 +182,7 @@ var handlePlayerMovement = function (
         }
     } else {
         if (char.onGaz) {
-            char.outGaz = false
+            char.onGaz = false
             char.smokeSystem.In.stop()
         }
     }
