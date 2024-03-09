@@ -37,8 +37,8 @@ function createRedPoint(scene, coordinates, hookName) {
     var pointMaterial = new BABYLON.StandardMaterial('pointMaterial', scene)
     var color
     hookName === 'left'
-        ? (color = new BABYLON.Color3(0, 101, 255))
-        : (color = new BABYLON.Color3(255, 93, 0))
+        ? (color = new BABYLON.Color3.FromInts(0, 101, 255))
+        : (color = new BABYLON.Color3.FromInts(255, 93, 0))
     pointMaterial.emissiveColor = color // Rouge
 
     var point = BABYLON.MeshBuilder.CreateSphere(
@@ -81,8 +81,8 @@ const getCameraDirection = (camera) => {
 const hookReturned = (char, camera, scene, hookName, sound) => {
     var color
     hookName === 'left'
-        ? (color = new BABYLON.Color3(0, 101, 255))
-        : (color = new BABYLON.Color3(255, 93, 0))
+        ? (color = new BABYLON.Color3.FromInts(0, 101, 255))
+        : (color = new BABYLON.Color3.FromInts(255, 93, 0))
     var hookPosition = getHookPosition(char.player, hookName)
     char.hooks[hookName].size -= 3.5
     var ray = new BABYLON.Ray(
@@ -110,8 +110,8 @@ const hookReturned = (char, camera, scene, hookName, sound) => {
 const hookThrower = (char, camera, scene, hookName, sound) => {
     var color
     hookName === 'left'
-        ? (color = new BABYLON.Color3(0, 101, 255))
-        : (color = new BABYLON.Color3(255, 93, 0))
+        ? (color = new BABYLON.Color3.FromInts(0, 101, 255))
+        : (color = new BABYLON.Color3.FromInts(255, 93, 0))
     var hookPosition = getHookPosition(char.player, hookName)
     var cameraPosition = camera.position
     var firstThrow = false
@@ -172,8 +172,8 @@ const hookThrower = (char, camera, scene, hookName, sound) => {
 const hookSetter = (char, camera, scene, hookName) => {
     var color
     hookName === 'left'
-        ? (color = new BABYLON.Color3(0, 101, 255))
-        : (color = new BABYLON.Color3(255, 93, 0))
+        ? (color = new BABYLON.Color3.FromInts(0, 101, 255))
+        : (color = new BABYLON.Color3.FromInts(255, 93, 0))
     var hookPosition = getHookPosition(char.player, hookName)
     var pickedPoint = char.hooks[hookName].pickedPoint
     var direction = getDirection(hookPosition, pickedPoint)
