@@ -49,6 +49,7 @@ const loadModel = async (scene) => {
 
 const createSkybox = function (scene) {
     var skybox = BABYLON.Mesh.CreateBox('skyBox', 10000.0, scene)
+    skybox.isPickable = false
     var skyboxMaterial = new BABYLON.StandardMaterial('skyBox', scene)
     skyboxMaterial.backFaceCulling = false
     skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(
@@ -60,6 +61,8 @@ const createSkybox = function (scene) {
     skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0)
     skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0)
     skybox.material = skyboxMaterial
+
+    skybox.position.y = skybox.scaling.y / 2
 }
 
 const loadSphere = function (scene) {
@@ -102,8 +105,10 @@ const createScene = async function () {
     const hk = new BABYLON.HavokPlugin(true, havokInstance)
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), hk)
 
-    createLight(scene)
-
+    // createLight(scene)
+    createSunLight(scene)
+    createSceneAxes(scene)
+    createSkyLight(scene)
     // loadBox(scene)
     // loadSphere(scene)
 
@@ -187,6 +192,7 @@ const setupGameLogic = async function (app) {
     app.animation = getAnimation(app.game.scene)
     // app.fps = addFpsCounter(app.game.scene, app.game.camera)
     // console.log('app.fps', app.fps)
+    const ring = createRing(app.game.scene, 'touch', 30, 5, 100, true)
     const tower = mapTower.forEach((position) => {
         createTower(10, 700, 10, position.x, position.z, app.game.scene)
     })

@@ -196,7 +196,6 @@ const hookSetter = (char, camera, scene, hookName) => {
         const speed = 1
         var currentLinearVelocity =
             char.playerAggregate.body.getLinearVelocity()
-
         var newLinearVelocity = currentLinearVelocity.add(
             direction.scale(speed)
         )

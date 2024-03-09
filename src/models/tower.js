@@ -9,6 +9,14 @@ var createTower = function (w, h, d, x, z, scene) {
     tower.position.z = z
     tower.checkCollisions = true
 
+    var material = new BABYLON.StandardMaterial('touch', scene)
+
+    // Appliquer la texture au matériau
+    material.diffuseTexture = new BABYLON.Texture("utils/textures/rock.png", scene)
+
+    // Appliquer le matériau à la tour
+    tower.material = material
+
     const towerAggregate = new BABYLON.PhysicsAggregate(
         tower,
         BABYLON.PhysicsShapeType.BOX,
