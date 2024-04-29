@@ -11,7 +11,7 @@ function createFollowCamera(scene, player, lock) {
     const camera = new BABYLON.ArcRotateCamera(
         'followCamera',
         -30,
-        Math.PI / 2,
+        Math.PI / 2, // Initial polar angle
         4,
         new BABYLON.Vector3(0, 0, 10),
         scene
@@ -23,18 +23,21 @@ function createFollowCamera(scene, player, lock) {
 
     camera.attachControl(scene, true);
 
-    camera.lowerBetaLimit = 0.1;
-    camera.upperBetaLimit = Math.PI / 2;
+    camera.lowerBetaLimit = 0; // Allow the camera to look down
+    camera.upperBetaLimit = Math.PI; // Allow the camera to look up
+
     const cylinder = player.parent;
     const head = cylinder.getChildren().find(function (element) {
         return element.name === 'head';
     });
 
     camera.setTarget(head);
-    camera.checkCollisions = true;
+    // camera.checkCollisions = true;
 
     // Additional properties for ArcRotateCamera
-    camera.upperBetaLimit = Math.PI / 2; // Limit vertical rotation
+    // camera.upperBetaLimit = Math.PI / 2; // Limit vertical rotation
+    // camera.collisionRadius = new BABYLON.Vector3(0.5, 0.5, 0.5);
+    // camera.lowerRadiusLimit = 5;
     camera.radius = 10; // Distance from the target object
     camera.minZ = 0.1; // Near clip plane
     camera.maxZ = 1000; // Far clip plane
