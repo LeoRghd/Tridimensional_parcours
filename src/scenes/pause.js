@@ -38,9 +38,9 @@ var createPauseScene = function (app) {
     button.cornerRadius = 20
     button.background = 'green'
     button.onPointerDownObservable.add(function () {
-        // canvas.requestPointerLock()
-        console.log('click on pause')
-        return (app.isPaused = false)
+        app.isPaused = false // Set game state to not paused
+        app.timer.start() // Resume timer
+        console.log('Game resumed')
     })
     panel.addControl(button)
     app.pause.scene = scene

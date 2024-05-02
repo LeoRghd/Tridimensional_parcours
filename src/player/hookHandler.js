@@ -53,6 +53,7 @@ function createRedPoint(scene, coordinates, hookName) {
     return point
 }
 
+let hitPosition;
 const hookHit = (scene, ray, hookName, sound) => {
     var pickResults = scene.pickWithRay(ray)
     if (pickResults.hit && pickResults.pickedMesh.id === 'touch') {
@@ -63,6 +64,7 @@ const hookHit = (scene, ray, hookName, sound) => {
         if (sound.throwHook.isPlaying) sound.throwHook.stop()
         sound.hookHit.play()
         const hitMark = createRedPoint(scene, hitResult.pickedPoint, hookName)
+        hitPosition = hitResult.point;
         return { hitResult, hitMark }
     }
     return null
@@ -112,19 +114,19 @@ const hookThrower = (char, camera, scene, hookName, sound) => {
     hookName === 'left'
         ? (color = new BABYLON.Color3.FromInts(0, 101, 255))
         : (color = new BABYLON.Color3.FromInts(255, 93, 0))
+
     var hookPosition = getHookPosition(char.player, hookName)
     var cameraPosition = camera.position
-    var firstThrow = false
 
     // First frame of throw
     if (!char.hooks[hookName].direction) {
         sound.throwHook.play()
-        firstThrow = true
         char.hooks[hookName].direction = getCameraDirection(camera)
         char.hooks[hookName].size = 1
     }
 
     char.hooks[hookName].size += 3.5
+    char.hooks[hookName].direction = getCameraDirection(camera)
     var rayMaterial = new BABYLON.StandardMaterial('rayMaterial', scene)
     rayMaterial.emissiveColor = color // Rouge
     rayMaterial.material = rayMaterial
@@ -165,6 +167,8 @@ const hookThrower = (char, camera, scene, hookName, sound) => {
         char.hooks[hookName].isThrown = false
         char.hooks[hookName].isSet = true
         char.hooks[hookName].pickedPoint = hitPoint.pickedPoint
+        console.log("hi")
+        updatePlayerRotation(char.player, tmp.hitResult.pickedPoint);
     }
     return char
 }
@@ -226,3 +230,10 @@ const hookHandler = (char, camera, scene, hookName, texture, sound) => {
     }
     return char
 }
+
+
+function updatePlayerRotation(player, hitPoint) {
+    const direction = hitPoint.subtract(player.position);
+    const angle = Math.atan2(direction.x, direction.z);
+    player.rotation.y = angle;
+    }

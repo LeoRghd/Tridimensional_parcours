@@ -25,15 +25,45 @@ app.char = {
 app.ray = false
 app.ground = {}
 app.crossHair = {}
+app.timer = {
+    startTime: null,
+    pauseTime: null,
+    elapsedPauseTime: 0, // To accumulate paused time
+    timerText: null,
+    start: function () {
+        if (this.pauseTime !== null) {
+            // Calculate the duration of the current pause
+            let currentPauseDuration = Date.now() - this.pauseTime
+            this.elapsedPauseTime += currentPauseDuration
+            this.pauseTime = null
+        }
+        if (this.startTime === null) {
+            this.startTime = Date.now()
+        }
+    },
+    pause: function () {
+        if (this.pauseTime === null) {
+            // Only set pauseTime if not already paused
+            this.pauseTime = Date.now()
+        }
+    },
+    reset: function () {
+        this.startTime = Date.now()
+        this.pauseTime = null
+        this.elapsedPauseTime = 0
+    },
+}
 
 const onOffPause = (lock) => {
     if (lock) {
-        app.isPaused = false
+        app.isPaused = false;
+        app.timer.start();  // Ensure this is called only when resuming the game
     } else {
-        app.isPaused = true
+        app.isPaused = true;
+        app.timer.pause();  // Pause the timer when the game is paused
     }
-    console.log('app.isPaused', app.isPaused)
-}
+    console.log('app.isPaused', app.isPaused);
+};
 
 document.addEventListener('pointerlockchange', function () {
     if (!document.pointerLockElement) {
@@ -48,7 +78,7 @@ const loadModel = async (scene) => {
 }
 
 const createSkybox = function (scene) {
-    var skybox = BABYLON.Mesh.CreateBox('skyBox', 10000.0, scene)
+    var skybox = BABYLON.Mesh.CreateBox('skyBox', 40000.0, scene)
     skybox.isPickable = false
     var skyboxMaterial = new BABYLON.StandardMaterial('skyBox', scene)
     skyboxMaterial.backFaceCulling = false
@@ -105,14 +135,15 @@ const createScene = async function () {
     const hk = new BABYLON.HavokPlugin(true, havokInstance)
     scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), hk)
 
-    // createLight(scene)
+    createLight(scene)
     createSunLight(scene)
     createSceneAxes(scene)
     createSkyLight(scene)
     // loadBox(scene)
     // loadSphere(scene)
-
-    applyGroundTexture(CreateGround(scene), scene)
+    CreateGround(scene)
+    // applyGroundTexture(CreateGround(scene), scene)
+    // await loadCanyonScene(scene)
     scene.collisionsEnabled = true
     return scene
 }
@@ -180,6 +211,10 @@ const setupGameLogic = async function (app) {
 //Main :
 ;(async () => {
     app.game.scene = await createScene()
+    // app.game.scene.debugLayer.show({
+    //     showPhysicsImpostor: true
+    // });
+    setupTimerGUI(app.game.scene)
     createSkybox(app.game.scene)
     let model = await loadModel(app.game.scene)
     app.char = { ...app.char, ...model }
@@ -193,27 +228,29 @@ const setupGameLogic = async function (app) {
     // app.fps = addFpsCounter(app.game.scene, app.game.camera)
     // console.log('app.fps', app.fps)
     const ring = createRing(app.game.scene, 'touch', 30, 5, 100, true)
-    const tower = mapTower.forEach((position) => {
-        createTower(10, 700, 10, position.x, position.z, app.game.scene)
-    })
+    // const tower = mapTower.forEach((position) => {
+    //     createTower(10, 700, 10, position.x, position.z, app.game.scene)
+    // })
     app.crossHair = addCrosshair(app.game.scene, app.game.camera)
     app = await setupGameLogic(app)
 
     engine.runRenderLoop(function () {
         switch (app.state) {
-            case 'menu':
-                app.menu.scene.render()
-                break
             case 'game':
                 if (!app.isPaused) {
                     canvas.requestPointerLock()
+                    if (app.timer.startTime === null) {
+                        app.timer.start() // Start the timer if not already started
+                    }
+                    updateTimer() // Update timer continuously while the game is active
                     app.game.scene.render()
-                    //Inspecteur BABYLON !!!
-                    // app.game.scene.debugLayer.show()
-                }
-                if (app.isPaused) {
+                } else {
                     app.pause.scene.render()
                 }
+                break
+            case 'menu':
+                app.menu.scene.render()
+                break
             default:
                 break
         }

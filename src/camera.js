@@ -40,7 +40,7 @@ function createFollowCamera(scene, player, lock) {
     // camera.lowerRadiusLimit = 5;
     camera.radius = 10; // Distance from the target object
     camera.minZ = 0.1; // Near clip plane
-    camera.maxZ = 1000; // Far clip plane
+    camera.maxZ = 42000; // Far clip plane
 
     return camera;
 }

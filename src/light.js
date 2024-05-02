@@ -1,11 +1,11 @@
 var createLight = function (scene) {
     const light = new BABYLON.HemisphericLight(
         'light',
-        new BABYLON.Vector3(0, 2, 0),
+        new BABYLON.Vector3(0, 35000, 0),
         scene
     )
     // Dim the light a small amount 0 - 1
-    light.intensity = 0.7
+    light.intensity = 0.5
     return light
 }
 
@@ -93,6 +93,9 @@ createSkyLight = function (scene) {
     return skyLight
 }
 
+createUpLight = function (scene) {
+
+}
 
 
 function createSceneAxes(scene) {

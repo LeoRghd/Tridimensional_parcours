@@ -1,3 +1,4 @@
+//TODO gravity acceleration
 var loadPlayer = async (scene) => {
     const model = await BABYLON.SceneLoader.ImportMeshAsync(
         '',
@@ -13,19 +14,18 @@ var loadPlayer = async (scene) => {
     cylinderMaterial.alpha = 0.5 // Rend le matériau semi-transparent
     const cylinder = BABYLON.MeshBuilder.CreateCapsule(
         'cylinder',
-        { radius: 0.5, height: 1.5 },
+        { radius: 0.1, height: 1.5 },
         scene
     )
     cylinder.material = cylinderMaterial
-    cylinder.position = new BABYLON.Vector3(0, 0.75, 0)
     cylinder.isVisible = true
     cylinder.isPickable = false
     player = model.meshes[0]
     player.isPickable = false
-
+    
     // player.rotate(axis, angle, BABYLON.Space.WORLD)
     cylinder.addChild(player)
-
+    
     const sphere = BABYLON.MeshBuilder.CreateSphere(
         'head',
         { diameter: 0.5 },
@@ -96,6 +96,8 @@ var loadPlayer = async (scene) => {
             mesh.isPickable = false
         }
     })
-
+    // const initialPosition = new BABYLON.Vector3(1, 50, 0);
+    console.log('playerAggregate.body', playerAggregate);
+    cylinder.position = new BABYLON.Vector3(2500, 5000, 2500)
     return { player, playerAggregate }
 }
