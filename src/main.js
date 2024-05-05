@@ -1,6 +1,7 @@
 var canvas = document.getElementById('renderCanvas')
 var engine = new BABYLON.Engine(canvas, true)
 
+var createdObjects = []
 var app = {}
 app.state = 'menu'
 app.isLocked = 'false'
@@ -147,10 +148,64 @@ const createScene = async function () {
     scene.collisionsEnabled = true
     return scene
 }
+/////////////////////////////////////////////////////////////////////////
+
+function createObjectAtCameraTarget(camera, scene) {
+    var position = camera.getTarget().clone();
+    var object = BABYLON.MeshBuilder.CreateCylinder("cylinder", {height: 10, diameter: 5}, scene);
+    object.position = position;
+
+    // Create a physics aggregate for the cylinder
+    var cylinderAggregate = new BABYLON.PhysicsAggregate(
+        object,
+        BABYLON.PhysicsShapeType.CYLINDER,
+        { mass: 1, restitution: 0.1 },
+        scene
+    );
+    cylinderAggregate.body.setMotionType(BABYLON.PhysicsMotionType.STATIC);
+    cylinderAggregate.body.setMassProperties({
+        inertia: new BABYLON.Vector3(0, 0, 0),
+    });
+    cylinderAggregate.body.disablePreStep = false;
+
+    createdObjects.push(object);
+}
+function removeLastObject() {
+    if (createdObjects.length > 0) {
+        var lastObject = createdObjects.pop();
+        lastObject.dispose();
+    }
+}
+
+window.addEventListener("keydown", function(event) {
+    if (event.key === 'c') {
+        console.log('create object');
+        createObjectAtCameraTarget(app.game.camera, app.game.scene);
+    }
+});
+window.addEventListener("keydown", function(event) {
+    if (event.key === 'p') { // 'p' key for print
+        console.log('Camera position:', app.game.camera.position);
+    }
+});
+
+// Event listener for the 'r' key to remove objects
+window.addEventListener("keydown", function(event) {
+    if (event.key === 'r') {
+        console.log('remove object');
+        removeLastObject();
+    }
+});
+
+/////////////////////////////////////////////////////////////////////////
 
 const createCamera = function (scene, player) {
-    var camera = createFollowCamera(scene, player, false)
-    camera.wheelPrecision = 10
+    // var camera = createFollowCamera(scene, player, false)
+    // camera.wheelPrecision = 10
+    var camera = new BABYLON.FreeCamera("freeCamera", new BABYLON.Vector3(0, 5,-10), scene);
+    camera.speed = 20.0;
+    camera.inertia = 0.9;
+    camera.attachControl(canvas, true);
     return camera
 }
 
