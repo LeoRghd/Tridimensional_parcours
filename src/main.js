@@ -155,7 +155,7 @@ const createSkybox = function (scene) {
 }
 
 const createCylinder = function (scene) {
-  const cylinder = BABYLON.MeshBuilder.CreateCylinder('winZone', { height: 8000, diameter: 1500 }, scene);
+  const cylinder = BABYLON.MeshBuilder.CreateCylinder('touch', { height: 8000, diameter: 1500 }, scene);
   const material = new BABYLON.StandardMaterial("material", scene);
   cylinder.position = new BABYLON.Vector3(7500, 5000, 7500);
   material.diffuseColor = new BABYLON.Color3(0, 1, 0);
@@ -164,7 +164,7 @@ const createCylinder = function (scene) {
   // Indiquer que le matériau doit être rendu avec sa transparence
   material.hasAlpha = true;
   cylinder.material = material;
-  cylinder.renderingGroupId = 1;
+  // cylinder.renderingGroupId = 1;
 
   const endAggregate = new BABYLON.PhysicsAggregate(
     cylinder,
@@ -453,7 +453,7 @@ function loadCreatedObjectsFromFile(scene) {
                 const rotation = BABYLON.Vector3.FromArray(data.rotation);
 
                 var object = BABYLON.MeshBuilder.CreateCylinder(
-                    "touch", { height: 50, diameter: 25 }, scene)
+                    "touch", { height: 1000, diameter: 75 }, scene)
                 object.position = position
                 object.rotation = rotation
                 object.checkCollisions = true
