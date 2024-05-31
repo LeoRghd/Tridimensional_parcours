@@ -60,6 +60,7 @@ const onOffPause = (lock) => {
         app.isPaused = false;
         app.timer.start();  // Ensure this is called only when resuming the game
     } else {
+
         app.isPaused = true;
         app.timer.pause();  // Pause the timer when the game is paused
     }
@@ -95,6 +96,44 @@ const createSkybox = function (scene) {
 
     skybox.position.y = skybox.scaling.y / 2
 }
+
+const createCylinder = function (scene) {
+  const cylinder = BABYLON.MeshBuilder.CreateCylinder('winZone', { height: 8000, diameter: 1500 }, scene);
+  const material = new BABYLON.StandardMaterial("material", scene);
+  cylinder.position = new BABYLON.Vector3(7500, 5000, 7500);
+  material.diffuseColor = new BABYLON.Color3(0, 1, 0);
+  material.alpha = 0.5;
+
+  // Indiquer que le matériau doit être rendu avec sa transparence
+  material.hasAlpha = true;
+  cylinder.material = material;
+  cylinder.renderingGroupId = 1;
+
+  const endAggregate = new BABYLON.PhysicsAggregate(
+    cylinder,
+    BABYLON.PhysicsShapeType.CYLINDER,
+    { mass: 0, restitution: 0.1 },
+    scene
+  );
+  return cylinder;
+}
+
+createStartZone = function (scene) {
+    const cube = BABYLON.MeshBuilder.CreateBox('touch', { size: 1000 }, scene);
+    const material = new BABYLON.StandardMaterial("material", scene);
+    cube.position = new BABYLON.Vector3(-7500, 1500, -7500);
+    material.diffuseColor = new BABYLON.Color3(1, 0, 0);
+    material.alpha = 0.5;
+    cube.material = material;
+    const startAggregate = new BABYLON.PhysicsAggregate(
+      cube,
+      BABYLON.PhysicsShapeType.BOX,
+      { mass: 0, restitution: 0.1 },
+      scene
+    );
+    return cube;
+}
+
 
 const loadSphere = function (scene) {
     const sphere = BABYLON.MeshBuilder.CreateSphere(
@@ -142,6 +181,8 @@ const createScene = async function () {
     createSkyLight(scene)
     // loadBox(scene)
     // loadSphere(scene)
+    createCylinder(scene)
+    createStartZone(scene);
     CreateGround(scene)
     // applyGroundTexture(CreateGround(scene), scene)
     // await loadCanyonScene(scene)
@@ -355,7 +396,7 @@ function loadCreatedObjectsFromFile(scene) {
                 const rotation = BABYLON.Vector3.FromArray(data.rotation);
 
                 var object = BABYLON.MeshBuilder.CreateCylinder(
-                    "cylinder", { height: 50, diameter: 25 }, scene)
+                    "touch", { height: 50, diameter: 25 }, scene)
                 object.position = position
                 object.rotation = rotation
                 object.checkCollisions = true

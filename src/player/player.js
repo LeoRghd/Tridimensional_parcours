@@ -99,6 +99,6 @@ var loadPlayer = async (scene) => {
     })
     // const initialPosition = new BABYLON.Vector3(1, 50, 0);
     console.log('playerAggregate.body', playerAggregate);
-    cylinder.position = new BABYLON.Vector3(2500, 5000, 2500)
+    cylinder.position = new BABYLON.Vector3(-7500, 2520, -7500)
     return { player, playerAggregate }
 }

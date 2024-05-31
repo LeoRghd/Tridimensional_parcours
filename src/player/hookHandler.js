@@ -125,7 +125,7 @@ const hookThrower = (char, camera, scene, hookName, sound) => {
         char.hooks[hookName].size = 1
     }
 
-    char.hooks[hookName].size += 3.5
+    char.hooks[hookName].size += 5.5
     char.hooks[hookName].direction = getCameraDirection(camera)
     var rayMaterial = new BABYLON.StandardMaterial('rayMaterial', scene)
     rayMaterial.emissiveColor = color // Rouge
@@ -145,7 +145,7 @@ const hookThrower = (char, camera, scene, hookName, sound) => {
     let rayHelper = new BABYLON.RayHelper(ray)
     rayHelper.show(scene, color)
     char.hooks[hookName].previousRay = rayHelper
-    if (char.hooks[hookName].size > 200) {
+    if (char.hooks[hookName].size > 500) {
         sound.hookIn.play()
         char.hooks[hookName].isBack = true
         char.hooks[hookName].isThrown = false
@@ -197,7 +197,7 @@ const hookSetter = (char, camera, scene, hookName) => {
     if (char.outGaz && !char.onGround) {
         char.playerAggregate.body.setLinearVelocity(direction.scale(-50))
     } else {
-        const speed = 1
+        const speed = 5
         var currentLinearVelocity =
             char.playerAggregate.body.getLinearVelocity()
         var newLinearVelocity = currentLinearVelocity.add(

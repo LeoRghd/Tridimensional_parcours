@@ -19,6 +19,8 @@ var CreateGround = function (scene) {
         material.diffuseTexture = texture
         material.specularColor = new BABYLON.Color3.Black();
         ground.material = material
+        ground.material.diffuseTexture.uScale = 10;
+        ground.material.diffuseTexture.vScale = 10;
         console.log('material', material);  
         ground.position = new BABYLON.Vector3(0, 0, 0)
         ground.isPickable = true

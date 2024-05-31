@@ -8,14 +8,14 @@ function dynamicCrosshair(distance, textTexture) {
             textTexture.getSize().width,
             textTexture.getSize().height
         ) // Efface le canvas
-        if (distance > 200 && distance < 500) {
+        if (distance > 500 && distance < 800) {
             ctx.fillStyle = 'red'
             ctx.font = 'bold 16px Arial'
             ctx.textAlign = 'center'
             ctx.textBaseline = 'middle'
             ctx.fillText(distance.toFixed(2), 256, 128) // Centre le texte dans la texture
             textTexture.update()
-        } else if (distance < 200) {
+        } else if (distance < 500) {
             ctx.fillStyle = 'white'
             ctx.font = 'bold 16px Arial'
             ctx.textAlign = 'center'
