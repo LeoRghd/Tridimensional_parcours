@@ -55,6 +55,63 @@ app.timer = {
     },
 }
 
+
+const resest = function (app) {
+  app = {}
+  app.state = 'menu'
+  app.isLocked = 'false'
+  app.game = {}
+  app.menu = {}
+  app.pause = {}
+  app.char = {
+      hooks: {
+          left: {
+              isOn: false,
+              isSet: false,
+              isThrown: false,
+          },
+          right: {
+              isOn: false,
+              isSet: false,
+              isThrown: false,
+          },
+      },
+      isMoving: false,
+  }
+  app.ray = false
+  app.ground = {}
+  app.crossHair = {}
+  app.timer = {
+      startTime: null,
+      pauseTime: null,
+      elapsedPauseTime: 0, // To accumulate paused time
+      timerText: null,
+      start: function () {
+          if (this.pauseTime !== null) {
+              // Calculate the duration of the current pause
+              let currentPauseDuration = Date.now() - this.pauseTime
+              this.elapsedPauseTime += currentPauseDuration
+              this.pauseTime = null
+          }
+          if (this.startTime === null) {
+              this.startTime = Date.now()
+          }
+      },
+      pause: function () {
+          if (this.pauseTime === null) {
+              // Only set pauseTime if not already paused
+              this.pauseTime = Date.now()
+          }
+      },
+      reset: function () {
+          this.startTime = Date.now()
+          this.pauseTime = null
+          this.elapsedPauseTime = 0
+      },
+  }
+  
+
+}
 const onOffPause = (lock) => {
     if (lock) {
         app.isPaused = false;
