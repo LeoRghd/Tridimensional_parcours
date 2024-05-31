@@ -1,4 +1,5 @@
 //TODO gravity acceleration
+//x: -5785.836610721077, _y: 3467.097526005999, _z: -6572.444794150835} Start coordinates
 var loadPlayer = async (scene) => {
     const model = await BABYLON.SceneLoader.ImportMeshAsync(
         '',

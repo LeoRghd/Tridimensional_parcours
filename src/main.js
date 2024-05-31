@@ -150,62 +150,122 @@ const createScene = async function () {
 }
 /////////////////////////////////////////////////////////////////////////
 
-function createObjectAtCameraTarget(camera, scene) {
-    var position = camera.getTarget().clone();
-    var object = BABYLON.MeshBuilder.CreateCylinder("cylinder", {height: 10, diameter: 5}, scene);
-    object.position = position;
+// Creative mode
 
-    // Create a physics aggregate for the cylinder
-    var cylinderAggregate = new BABYLON.PhysicsAggregate(
-        object,
-        BABYLON.PhysicsShapeType.CYLINDER,
-        { mass: 1, restitution: 0.1 },
-        scene
-    );
-    cylinderAggregate.body.setMotionType(BABYLON.PhysicsMotionType.STATIC);
-    cylinderAggregate.body.setMassProperties({
-        inertia: new BABYLON.Vector3(0, 0, 0),
-    });
-    cylinderAggregate.body.disablePreStep = false;
+// const keysPressed = {};
+// const rotationStep = Math.PI / 8;
 
-    createdObjects.push(object);
-}
-function removeLastObject() {
-    if (createdObjects.length > 0) {
-        var lastObject = createdObjects.pop();
-        lastObject.dispose();
-    }
-}
+// function createObjectAtCameraTarget(camera, scene) {
+//     const position = camera.getTarget().clone();
+//     const object = BABYLON.MeshBuilder.CreateCylinder("cylinder", { height: 50, diameter: 25 }, scene);
+//     object.position = position;
 
-window.addEventListener("keydown", function(event) {
-    if (event.key === 'c') {
-        console.log('create object');
-        createObjectAtCameraTarget(app.game.camera, app.game.scene);
-    }
-});
-window.addEventListener("keydown", function(event) {
-    if (event.key === 'p') { // 'p' key for print
-        console.log('Camera position:', app.game.camera.position);
-    }
-});
+//     const cylinderAggregate = new BABYLON.PhysicsAggregate(
+//         object,
+//         BABYLON.PhysicsShapeType.CYLINDER,
+//         { mass: 1, restitution: 0.1 },
+//         scene
+//     );
+//     cylinderAggregate.body.setMotionType(BABYLON.PhysicsMotionType.STATIC);
+//     cylinderAggregate.body.setMassProperties({
+//         inertia: new BABYLON.Vector3(0, 0, 0),
+//     });
 
-// Event listener for the 'r' key to remove objects
-window.addEventListener("keydown", function(event) {
-    if (event.key === 'r') {
-        console.log('remove object');
-        removeLastObject();
-    }
-});
+//     createdObjects.push(object);
+// }
+
+// function removeLastObject() {
+//     if (createdObjects.length > 0) {
+//         const lastObject = createdObjects.pop();
+//         lastObject.dispose();
+//     }
+// }
+
+// function applyRotationToLastObject(rotationDelta) {
+//     if (createdObjects.length > 0) {
+//         const lastObject = createdObjects[createdObjects.length - 1];
+
+//         // Get the current rotation
+//         const currentRotation = lastObject.rotation.clone();
+//         console.log('Current rotation:', currentRotation);
+
+//         // Apply the rotation delta
+//         currentRotation.x += rotationDelta.x;
+//         currentRotation.y += rotationDelta.y;
+//         currentRotation.z += rotationDelta.z;
+
+//         // Update the object's rotation
+//         lastObject.rotation = currentRotation;
+//         console.log('Updated rotation:', lastObject.rotation);
+//     }
+// }
+
+// function handleRotation(event, rotationStep) {
+//     let rotationDelta = new BABYLON.Vector3(0, 0, 0);
+
+//     switch (event.key) {
+//         case 't':
+//             if (createdObjects.length > 0) {
+//                 console.log('Last object rotation:', createdObjects[createdObjects.length - 1].rotation);
+//             }
+//             break;
+//         case 'm': // Rotate around X axis
+//             rotationDelta.x += rotationStep;
+//             break;
+//         case 'l': // Rotate around X axis
+//             rotationDelta.x -= rotationStep;
+//             break;
+//         case 'k': // Rotate around Y axis
+//             rotationDelta.y -= rotationStep;
+//             break;
+//         case 'j': // Rotate around Y axis
+//             rotationDelta.y += rotationStep;
+//             break;
+//         case 'h': // Rotate around Z axis counterclockwise
+//             rotationDelta.z -= rotationStep;
+//             break;
+//         case 'g': // Rotate around Z axis clockwise
+//             rotationDelta.z += rotationStep;
+//             break;
+//         default:
+//             return; // Do nothing if it's not one of the rotation keys
+//     }
+
+//     applyRotationToLastObject(rotationDelta);
+// }
+
+// window.addEventListener("keydown", function (event) {
+//     handleRotation(event, rotationStep);
+// });
+
+// window.addEventListener("keydown", function (event) {
+//     switch (event.key) {
+//         case 'c':
+//             console.log('Create object');
+//             createObjectAtCameraTarget(app.game.camera, app.game.scene);
+//             break;
+//         case 'r':
+//             console.log('Remove object');
+//             removeLastObject();
+//             break;
+//         case 'p':
+//             console.log('Camera position:', app.game.camera.position);
+//             break;
+//     }
+// });
+
+
+
 
 /////////////////////////////////////////////////////////////////////////
 
 const createCamera = function (scene, player) {
-    // var camera = createFollowCamera(scene, player, false)
-    // camera.wheelPrecision = 10
-    var camera = new BABYLON.FreeCamera("freeCamera", new BABYLON.Vector3(0, 5,-10), scene);
-    camera.speed = 20.0;
-    camera.inertia = 0.9;
-    camera.attachControl(canvas, true);
+    var camera = createFollowCamera(scene, player, false)
+    camera.wheelPrecision = 10
+    // var camera = new BABYLON.FreeCamera("freeCamera", new BABYLON.Vector3(0, 5,-10), scene);
+    // camera.speed = 20.0;
+    // camera.inertia = 0.9;
+    // camera.attachControl(canvas, true);
     return camera
 }
 
@@ -263,12 +323,82 @@ const setupGameLogic = async function (app) {
     return app
 }
 
+/////////////////////////////////////////////////////////////////////////
+
+// Function to save created objects to a JSON file
+function saveCreatedObjectsToFile() {
+    const objectData = createdObjects.map(obj => ({
+        position: obj.position.asArray(),
+        rotation: obj.rotation.asArray()
+    }));
+    const dataStr = JSON.stringify(objectData);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'created_objects.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(url);
+}
+
+// Function to load created objects from a JSON file
+function loadCreatedObjectsFromFile(scene) {
+    fetch('created_objects.json')
+        .then(response => response.json())
+        .then(objectDataArray => {
+            objectDataArray.forEach(data => {
+                const position = BABYLON.Vector3.FromArray(data.position);
+                const rotation = BABYLON.Vector3.FromArray(data.rotation);
+
+                var object = BABYLON.MeshBuilder.CreateCylinder(
+                    "cylinder", { height: 50, diameter: 25 }, scene)
+                object.position = position
+                object.rotation = rotation
+                object.checkCollisions = true
+
+                var material = new BABYLON.StandardMaterial('touch', scene)
+
+                // Appliquer la texture au matériau
+                material.diffuseTexture = new BABYLON.Texture("utils/textures/rock.png", scene)
+
+                // Appliquer le matériau à la tour
+                object.material = material
+
+                const cylinderAggregate = new BABYLON.PhysicsAggregate(
+                    object,
+                    BABYLON.PhysicsShapeType.CYLINDER,
+                    { mass: 0, restitution: 0.1 },
+                    scene
+                );
+                
+
+                createdObjects.push(object);
+            });
+        })
+        .catch(error => console.error('Error loading objects:', error));
+}
+
+// Add an event listener for the "v" key to save objects
+window.addEventListener("keydown", function (event) {
+    if (event.key === 'v') {
+        saveCreatedObjectsToFile();
+    }
+});
+
+/////////////////////////////////////////////////////////////////////////
+
+
 //Main :
 ;(async () => {
     app.game.scene = await createScene()
     // app.game.scene.debugLayer.show({
     //     showPhysicsImpostor: true
     // });
+    loadCreatedObjectsFromFile(app.game.scene);
     setupTimerGUI(app.game.scene)
     createSkybox(app.game.scene)
     let model = await loadModel(app.game.scene)
